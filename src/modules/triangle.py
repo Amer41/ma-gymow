@@ -1,10 +1,12 @@
 # Es wird eine Klasse für Dreiecke erstellt.
 # Dabei werden die konstanten beim MT-Algorithmus zum Bestimmen
 # der Schnittpunkte zwischen einem Strahl und einem Dreieck
-# berechnet, welche nicht vom Strahl abhängig sind, und in der Klasse gespeichert. 
+# berechnet, welche nicht vom Strahl abhängig sind, und in der Klasse gespeichert.
+from vector3 import vec3
+
 class triangle:
     # origin = vec3(0,0,0)
-    def __init__(self, v1 , v2, v3):
+    def __init__(self, v1: vec3 , v2: vec3, v3: vec3):
         self.b = v2
         self.c = v3
         self.a = v1
