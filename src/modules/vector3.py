@@ -3,9 +3,7 @@ from dataclasses import dataclass
 import math
 import numpy as np
 
-if __name__ == '__main__':
-# if TYPE_CHECKING:
-    from .matrix3 import Matrix3
+from .matrix3 import Matrix3
 
 
 @dataclass
@@ -53,6 +51,11 @@ class vec3:
                     self.y * other.y,
                     self.z * other.z)
 
+    def multiply_matrix3(self, matrix3: 'Matrix3'): # matrix-vector-multiplikation
+        return vec3(matrix3.x_0 * self.x + matrix3.y_0 * self.y + matrix3.z_0 * self.z,
+                    matrix3.x_1 * self.x + matrix3.y_1 * self.y + matrix3.z_1 * self.z,
+                    matrix3.x_2 * self.x + matrix3.y_2 * self.y + matrix3.z_2 * self.z)
+
     
 
     def cross(self, other: 'vec3') -> 'vec3':
@@ -76,7 +79,7 @@ class vec3:
                        xy, yy, yz,
                        xz, yz, zz)
 
-    def to_array(self: 'vec3') -> np.ndarray[int, np.dtype[np.float64]]:
+    def to_array(self: 'vec3'):
         return np.array([self.x, self.y, self.z], dtype=np.float64) # type: ignore
 
     def __str__(self):
@@ -84,12 +87,12 @@ class vec3:
         
 
 
-    def isequal_array(self, array: np.ndarray[int, np.dtype[np.float64]]) -> bool:
+    def isequal_array(self, array) -> bool:
         if (not array[0] == self.x) or (not array[1] == self.y) or (not array[2] == self.z):
             print('False: vec - array')
             return False
         return True
-    def isequal_array_rounded(self, array:np.ndarray[int, np.dtype[np.float64]], r:int) -> bool:
+    def isequal_array_rounded(self, array, r:int) -> bool:
         array = np.round(array, r) # type: ignore
         if (not array[0] == round(self.x, r)) or (not array[1] == round(self.y, r)) or (not array[2] == round(self.z, r)):
             print('False: vec - array; rounded')
@@ -109,7 +112,7 @@ class vec3:
         return True
         
     @classmethod
-    def from_array(cls, array: np.ndarray[int, np.dtype[np.float64]]) -> 'vec3':
+    def from_array(cls, array) -> 'vec3':
                                
         x,y,z = array
         return cls(float(x), float(y), float(z))

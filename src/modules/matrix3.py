@@ -2,9 +2,7 @@ import numpy as np
 from dataclasses import dataclass
 from typing import Union
 
-if __name__ == '__main__':
-    from .vector3 import vec3
-    import numpy as np
+
 
 
 
@@ -31,10 +29,10 @@ class Matrix3:
                        self.x_1 * scalar, self.y_1 * scalar, self.z_1 * scalar,
                        self.x_2 * scalar, self.y_2 * scalar, self.z_2 * scalar)
 
-    def multiply_vec3(self, v: 'vec3'): # matrix-vector-multiplikation
-        return vec3(self.x_0 * v.x + self.y_0 * v.y + self.z_0 * v.z,
-                    self.x_1 * v.x + self.y_1 * v.y + self.z_1 * v.z,
-                    self.x_2 * v.x + self.y_2 * v.y + self.z_2 * v.z)
+    # def multiply_vec3(self, v: 'vec3'): # matrix-vector-multiplikation
+    #     return vec3(self.x_0 * v.x + self.y_0 * v.y + self.z_0 * v.z,
+    #                 self.x_1 * v.x + self.y_1 * v.y + self.z_1 * v.z,
+    #                 self.x_2 * v.x + self.y_2 * v.y + self.z_2 * v.z)
         
     def sumup(self, other: 'Matrix3'): # aufsummierung (self wird übergeschrieben)
         self.x_0 += other.x_0 
@@ -60,12 +58,12 @@ class Matrix3:
                       str((self.x_1, self.y_1, self.z_1)) + '\n ' + 
                       str((self.x_2, self.y_2, self.z_2)) + ')' )
 
-    def to_array(self) ->  np.ndarray[int, np.dtype[np.float64]]: # matrix3 in numpy-array
+    def to_array(self): # matrix3 in numpy-array
         return np.array([[self.x_0, self.y_0 , self.z_0], # type: ignore
                          [self.x_1, self.y_1 , self.z_1],
                          [self.x_2, self.y_2 , self.z_2]], dtype=np.float64) 
 
-    def isequal_array(self, array: np.ndarray[int, np.dtype[np.float64]]): # gleichheitprüfung: matrix3 numpy_array
+    def isequal_array(self, array): # gleichheitprüfung: matrix3 numpy_array
         if ((not self.x_0 == array[0][0]) or (not self.y_0 == array[0][1]) or (not self.z_0 == array[0][2]) or
             (not self.x_1 == array[1][0]) or (not self.y_1 == array[1][1]) or (not self.z_1 == array[1][2]) or
             (not self.x_2 == array[2][0]) or (not self.y_2 == array[2][1]) or (not self.z_2 == array[2][2])):
@@ -76,7 +74,7 @@ class Matrix3:
         return Matrix3(round(self.x_0, r), round(self.y_0, r), round(self.z_0, r),
                        round(self.x_1, r), round(self.y_1, r), round(self.z_1, r),
                        round(self.x_2, r), round(self.y_2, r), round(self.z_2, r))
-    def isequal_array_rounded(self, arr: np.ndarray[int, np.dtype[np.float64]], r: int):
+    def isequal_array_rounded(self, arr, r: int):
         array = np.round(arr, r) #type: ignore
         matrix = self.round(r)
         if ((not matrix.x_0 == array[0][0]) or (not matrix.y_0 == array[0][1]) or (not matrix.z_0 == array[0][2]) or
@@ -87,7 +85,7 @@ class Matrix3:
         return True
 
     @classmethod
-    def from_array(cls, array: np.ndarray[int, np.dtype[np.float64]]): # erstellt matrix3 aus numpy_array
+    def from_array(cls, array): # erstellt matrix3 aus numpy_array
         a, b, c = array
         x_0, y_0, z_0 = a 
         x_1, y_1, z_1 = b

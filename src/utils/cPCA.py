@@ -1,5 +1,5 @@
 from src.modules.vector3 import vec3
-from src.modules.vector3 import Matrix3
+from src.modules.matrix3 import Matrix3
 import numpy.linalg as npl
 import numpy as np
 import math
@@ -132,7 +132,8 @@ def rotate_V1_v3(V1: list[vec3], A: Matrix3) -> list[vec3]: # rotiert V1, V2 = d
     V2: list[vec3] = []
     for v in V1:
         # v = V1[i]
-        v2 = A.multiply_vec3(v)
+        v2 = v.multiply_matrix3(A)
+        # v2 = A.multiply_vec3(v)
         V2.append(v2)
     return V2
 
