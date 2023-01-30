@@ -1,8 +1,7 @@
 from src.utils.curve import compute_U_v3, compute_X_and_R_from_T_devided_v3
 from src.utils.cPCA import shift_V_v3, compute_T_v3, compute_C_I_v3,compute_eigs_v3, rotate_V1_v3, compute_T_S_G_m_I_v3, compute_flipping_v3, compute_scale_v3, compute_V3_v3
 from src.utils.feature_vectore import compute_FSC_v3, invert_FSC_v3, extract_feasure_vector_v3
-from src.utils.parsing import read_obj_v3
-from src.utils.PSB import read_off
+from src.utils.parsing import read_obj_v3, read_off
 from src.modules.vector3 import vec3
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,16 +11,21 @@ import ipyvolume as ipv
 
 
 class object2: # dtype vec3
-    number_of_points = 15000 # Anzahl Punkte auf der 3D-Kurve
-    winding_speed = 200 # Windungszahl
-    p_min = 64000 # wird für die bestimmung des Skalierungsfaktors verwendet
-    c_number = 300 # Bestimmt Anzahl Fourier-Koeffizienen im Merkmalsvektor
+    # number_of_points = 15000 # Anzahl Punkte auf der 3D-Kurve
+    # winding_speed = 200 # Windungszahl
+    # p_min = 64000 # wird für die bestimmung des Skalierungsfaktors verwendet
+    # c_number = 300 # Bestimmt Anzahl Fourier-Koeffizienen im Merkmalsvektor
     plot_scale_U = 5 # skalierung für die visualisierung
-    U = compute_U_v3(number_of_points, winding_speed)
-    def __init__(self, V: list[vec3], F: list[tuple[int, int, int]]):
+    # U = compute_U_v3(number_of_points, winding_speed)
+    def __init__(self, V: list[vec3], F: list[tuple[int, int, int]], number_of_points: int, winding_speed: int, p_min:int, c_number: int):
         self.V = V
         self.F = F
+        self.number_of_points = number_of_points
+        self.winding_speed = winding_speed
+        self.p_min = p_min
+        self.c_number = c_number
 
+        self.U = compute_U_v3(self.number_of_points, self.winding_speed)
         # normalisierung
         self.T, self.S, self.S_total, self.G, self.m_I, self.normals1  = compute_T_S_G_m_I_v3(self.V, self.F)
         self.V1 = shift_V_v3(self.V, self.m_I)
@@ -32,25 +36,25 @@ class object2: # dtype vec3
         self.V2 = rotate_V1_v3(self.V1, self.A)
         self.T2 = compute_T_v3(self.V2, self.F)
         self.Fl = compute_flipping_v3(self.T2, self.S, self.S_total)
-        self.scale = compute_scale_v3(self.T2, self.S, self.S_total, object2.p_min)
+        self.scale = compute_scale_v3(self.T2, self.S, self.S_total, self.p_min)
         self.V3 = compute_V3_v3(self.V2, self.Fl, self.scale)
 
         # extrahierung des Merkmalsvektors fv
-        self.X, self.R = compute_X_and_R_from_T_devided_v3(object2.U, self.V3, self.F)
-        (self.As, self.Bs), self.Cs = compute_FSC_v3(object2.c_number, self.R)
-        self.R_real = invert_FSC_v3(object2.number_of_points, (self.As, self.Bs))
+        self.X, self.R = compute_X_and_R_from_T_devided_v3(self.U, self.V3, self.F)
+        (self.As, self.Bs), self.Cs = compute_FSC_v3(self.c_number, self.R)
+        self.R_real = invert_FSC_v3(self.number_of_points, (self.As, self.Bs))
         self.fv = extract_feasure_vector_v3(self.Cs)
 
 
     # Polygonnetze können aus OBJ oder OFF gelesen werden
     @classmethod
-    def from_obj(cls, obj_file: str):
+    def from_obj(cls, obj_file: str,  number_of_points: int, winding_speed: int, p_min:int, c_number: int):
         V, F = read_obj_v3(obj_file)
-        return cls(V, F)
+        return cls(V, F,  number_of_points, winding_speed, p_min, c_number)
     @classmethod
-    def from_off(cls, obj_file: str):
+    def from_off(cls, obj_file: str,  number_of_points: int, winding_speed: int, p_min:int, c_number: int):
         V, F = read_off(obj_file)
-        return cls(V, F)
+        return cls(V, F,  number_of_points, winding_speed, p_min, c_number)
     
 
     def distance_2(self, other: 'object2'):

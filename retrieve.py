@@ -1,52 +1,135 @@
 import os
 import math
 from src.modules.object2 import object2
-from src.utils.PSB import read_off
+from src.utils.parsing import read_off
 from typing import Union
 from src.utils.feature_vectore import compute_distance_2_v3
 import numpy as np
-def compute_FV_PSB(directory: str): # erstellt den Merkmalsvektor für alle Modelle im Benchmark
-                               # Merkmalsvektor wird immer in der gleichen Order gespeichert wie das OFF-File des Modells
-    confirm = input('do you want to compute all FVs in ' + str(directory) + '? (y/n)')
-    if confirm == 'y':
+from dataclasses import dataclass
+
+class PSDClassifications:
+    def __init__(self, classification_path: str) -> None:
+
+        self.base_test = os.path.join(classification_path, 'base/test.cla')
+        self.base_train = os.path.join(classification_path, 'base/train.cla')
+
+        self.coarse1_test = os.path.join(classification_path, 'coarse1/coarse1Test.cla')
+        self.coarse1_train = os.path.join(classification_path, 'coarse1/coarse1Train.cla')
+
+        self.coarse2_test = os.path.join(classification_path, 'coarse2/coarse2Test.cla')
+        self.coarse2_train = os.path.join(classification_path, 'coarse2/coarse2Train.cla')
+
+        self.coarse3_test = os.path.join(classification_path, 'coarse3/coarse3Test.cla')
+        self.coarse3_train = os.path.join(classification_path, 'coarse3/coarse3Train.cla')
+
+    @staticmethod
+    def read_cla(in_file: str): # Liest CLA-Files
+        with open(in_file, 'r') as f:
+            classification = []
+            # benchmark_name, version_num = f.readline().split(' ')
+            num_classes, num_models = f.readline().split(' ')
+            num_classes, num_models = len(num_classes), len(num_models)
+            for line in f:
+                if not line.strip(): # leere Zeile
+                    continue
+                elif len(line.strip().split(' ')) == 3:
+                    class_name, parentClass_name, num_modelsInClass = line.strip().split(' ')
+                    num_modelsInClass = int(num_modelsInClass)
+                    models = [parentClass_name, class_name, num_modelsInClass]
+                else:
+                    models.append(int(line)) # type: ignore
+                    num_modelsInClass -= 1 # type:ignore
+                    if num_modelsInClass == 0: # type: ignore
+                        classification.append(models) # type: ignore
+        return classification # type: ignore  # output = [[parentClass_name, class_name, num_modelsInClass, ....models....], [....],[....]....]
+
+
+class PSBSet:
+    relative_classification_path = 'benchmark/classification'
+    relative_bm_set_path = 'benchmark/db'
+
+    def __init__(self, set_path: str) -> None:
+
+        self.set_path: str = set_path
+        self.bm_set_path: str = os.path.join(set_path, PSBSet.relative_bm_set_path)
+
+        self.classification_path: str = os.path.join(set_path, PSBSet.relative_classification_path)
+        self.classifications: PSDClassifications = PSDClassifications(self.classification_path)
+
+@dataclass
+class FVCalculator():
+    psb_set: PSBSet
+    number_of_points: int
+    winding_speed: int
+    p_min: int
+    c_number: int
+    
+    @property
+    def fv_file_name(self) -> str:
+        return f'FV_{self.number_of_points}_{self.winding_speed}_{self.p_min}_{self.c_number}.txt'
+
+
+    def compute_FV_PSB(self): # erstellt den Merkmalsvektor für alle Modelle im Benchmark
+                                # Merkmalsvektor wird immer in der gleichen Order gespeichert wie das OFF-File des Modells
+        directory = self.psb_set.bm_set_path
+        confirm = input('do you want to compute all FVs in ' + str(directory) + '? (y/n)')
+        if confirm != 'y':
+            return
         for dirpath, _, filenames in os.walk(directory):
             if not len(filenames):
-                pass
-            else:
-                if not 'FV.txt' in filenames:
-                    for i in filenames:
-                        _, ext = os.path.splitext(i)
-                        if ext == '.off':
-                            file_path_off = os.path.join(dirpath, i)
-                            vertices, faces = read_off(file_path_off)
-                            print(file_path_off)
-                            obj = object2(vertices, faces)
-                            file_path_FV = os.path.join(dirpath, 'FV.txt')
-                            # file_path_X = os.path.join(dirpath, 'X.txt') # die Koordinaten der X-Kurve können auch erstellt werden
-                            with open(file_path_FV, 'w') as f:
-                                n = len(obj.fv)
-                                f.write(str(n) + '\n')
-                                for j in obj.fv:
-                                    f.write(str(j) + ' ')
-                            # with open(file_path_X, 'w') as f:
-                            #     n = len(obj.X)
-                            #     f.write(str(n) + '\n')
-                            #     for j in obj.X:
-                            #         f.write(str(j.x) + ' ' + str(j.y) + ' ' + str(j.z) + '\n')
+                continue
+            if self.fv_file_name in filenames:
+                continue
+            for i in filenames:
+                _, ext = os.path.splitext(i)
+                if ext != '.off':
+                    continue
+                file_path_off = os.path.join(dirpath, i)
+                vertices, faces = read_off(file_path_off)
+                print(file_path_off)
+                obj = object2(vertices, faces, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
+                file_path_FV = os.path.join(dirpath, self.fv_file_name)
+                # file_path_X = os.path.join(dirpath, 'X.txt') # die Koordinaten der X-Kurve können auch erstellt werden
+                with open(file_path_FV, 'w') as f:
+                    n = len(obj.fv)
+                    f.write(str(n) + '\n')
+                    for j in obj.fv:
+                        f.write(str(j) + ' ')
+                # with open(file_path_X, 'w') as f:
+                #     n = len(obj.X)
+                #     f.write(str(n) + '\n')
+                #     for j in obj.X:
+                #         f.write(str(j.x) + ' ' + str(j.y) + ' ' + str(j.z) + '\n')
 
-def delete_FV_PSB(directory: str): # macht die obere Funktion rückgängig
-    confirm = input('do you want to remove all FVs from ' + str(directory) + '? (y/n)')
-    # directory = 'PSB/test/'
-    # directory = 'PSB/psb_test1/benchmark/db/'
-    if confirm == 'y':
+    def delete_FV_PSB(self): # macht die obere Funktion rückgängig
+        directory = self.psb_set.bm_set_path
+        confirm = input('do you want to remove all FVs from ' + str(directory) + '? (y/n)')
+        # directory = 'PSB/test/'
+        # directory = 'PSB/psb_test1/benchmark/db/'
+        if confirm != 'y':
+            return
         for dirpath, _, filenames in os.walk(directory):
             print(dirpath)
             if not len(filenames):
-                pass
-            else:
-                if 'FV.txt' in filenames:
-                    file_path_FV = os.path.join(dirpath, 'FV.txt')
-                    os.remove(file_path_FV)
+                continue
+            if self.fv_file_name not in filenames:
+                continue
+            file_path_FV = os.path.join(dirpath, self.fv_file_name)
+            os.remove(file_path_FV)
+
+    def get_off_PSB(self, modelID: int): # holt ein bestimmtes Modell als object2
+        directory = self.psb_set.bm_set_path
+        sub_dir_1 = str(math.floor(modelID / 100))
+        sub_dir_2 = 'm' + str(modelID)
+        file_path_FV = os.path.join(directory, sub_dir_1, sub_dir_2, sub_dir_2 + '.off')
+        # print(file_path_FV)
+        if os.path.isfile(file_path_FV):
+            obj = object2.from_off(file_path_FV, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
+            return obj
+        else:
+            print('file does not exist')
+            print(file_path_FV)
+            return False
 
 
 
@@ -81,18 +164,6 @@ def get_classModels_FV_PSB(directory: str, indices): # holt modelle die einer be
     return fvs, class_name, parentClass_name  , num_modelsInClass # type: ignore
 
 
-def get_off_PSB(directory: str, modelID: int): # holt ein bestimmtes Modell als object2
-    sub_dir_1 = str(math.floor(modelID / 100))
-    sub_dir_2 = 'm' + str(modelID)
-    file_path_FV = os.path.join(directory, sub_dir_1, sub_dir_2, sub_dir_2 + '.off')
-    # print(file_path_FV)
-    if os.path.isfile(file_path_FV):
-        obj = object2.from_off(file_path_FV)
-        return obj
-    else:
-        print('file does not exist')
-        print(file_path_FV)
-        return False
 
 ################################################3
 
