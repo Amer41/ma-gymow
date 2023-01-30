@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 # %%
 psb_set = PSBSet('./psb_v1/')
-psb_calc = FVCalculator(psb_set, 15000, 200, 64000, 300)
+psb_calc = FVCalculator(psb_set, 15000, 200, 64000, 300, 0)
 # %%
 psb_calc.compute_FV_PSB()
 # %%

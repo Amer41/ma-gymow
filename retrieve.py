@@ -63,10 +63,11 @@ class FVCalculator():
     winding_speed: int
     p_min: int
     c_number: int
-    
+    filename_index: int
+
     @property
     def fv_file_name(self) -> str:
-        return f'FV_{self.number_of_points}_{self.winding_speed}_{self.p_min}_{self.c_number}.txt'
+        return f'FV_{self.number_of_points}_{self.winding_speed}_{self.p_min}_{self.c_number}_{self.filename_index}.txt'
 
 
     def compute_FV_PSB(self): # erstellt den Merkmalsvektor für alle Modelle im Benchmark
