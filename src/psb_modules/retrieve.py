@@ -2,46 +2,12 @@ import os
 import math
 from src.modules.object2 import object2
 from src.utils.parsing import read_off
-from typing import Union
+from typing import Union, Any
 from src.utils.feature_vectore import compute_distance_2_v3
+from src.psb_modules.classification import PSDClassification, ModelClass
 import numpy as np
 from dataclasses import dataclass
 
-class PSDClassifications:
-    def __init__(self, classification_path: str) -> None:
-
-        self.base_test = os.path.join(classification_path, 'base/test.cla')
-        self.base_train = os.path.join(classification_path, 'base/train.cla')
-
-        self.coarse1_test = os.path.join(classification_path, 'coarse1/coarse1Test.cla')
-        self.coarse1_train = os.path.join(classification_path, 'coarse1/coarse1Train.cla')
-
-        self.coarse2_test = os.path.join(classification_path, 'coarse2/coarse2Test.cla')
-        self.coarse2_train = os.path.join(classification_path, 'coarse2/coarse2Train.cla')
-
-        self.coarse3_test = os.path.join(classification_path, 'coarse3/coarse3Test.cla')
-        self.coarse3_train = os.path.join(classification_path, 'coarse3/coarse3Train.cla')
-
-    @staticmethod
-    def read_cla(in_file: str): # Liest CLA-Files
-        with open(in_file, 'r') as f:
-            classification = []
-            # benchmark_name, version_num = f.readline().split(' ')
-            num_classes, num_models = f.readline().split(' ')
-            num_classes, num_models = len(num_classes), len(num_models)
-            for line in f:
-                if not line.strip(): # leere Zeile
-                    continue
-                elif len(line.strip().split(' ')) == 3:
-                    class_name, parentClass_name, num_modelsInClass = line.strip().split(' ')
-                    num_modelsInClass = int(num_modelsInClass)
-                    models = [parentClass_name, class_name, num_modelsInClass]
-                else:
-                    models.append(int(line)) # type: ignore
-                    num_modelsInClass -= 1 # type:ignore
-                    if num_modelsInClass == 0: # type: ignore
-                        classification.append(models) # type: ignore
-        return classification # type: ignore  # output = [[parentClass_name, class_name, num_modelsInClass, ....models....], [....],[....]....]
 
 
 class PSBSet:
@@ -54,7 +20,7 @@ class PSBSet:
         self.bm_set_path: str = os.path.join(set_path, PSBSet.relative_bm_set_path)
 
         self.classification_path: str = os.path.join(set_path, PSBSet.relative_classification_path)
-        self.classifications: PSDClassifications = PSDClassifications(self.classification_path)
+        self.classifications: PSDClassification = PSDClassification(self.classification_path)
 
 @dataclass
 class FVCalculator():
@@ -136,90 +102,109 @@ class FVCalculator():
 
 
 
-def get_FV_PSB(directory: str, modelID: int): # holt der Merkmalsvektor von einem bestimmten Modell aus dem PSB # type: ignore
-    sub_dir_1 = str(math.floor(modelID / 100))
-    sub_dir_2 = 'm' + str(modelID)
-    file_path_FV = os.path.join(directory, sub_dir_1, sub_dir_2, 'FV.txt')
-    # print(file_path_FV)
-    if os.path.isfile(file_path_FV):
-        with open(file_path_FV, 'r') as f:
-            _ = int(f.readline())
-            fv = np.array([float(j) for j in f.readline().strip().split(' ')]) # type:ignore
-        return fv # type:  ignore
-    else:
-        print('file does not exist')
-        print(file_path_FV)
-        return False
+@dataclass
+class PSBAnalyser:
+    psb_set: PSBSet
+    number_of_points: int
+    winding_speed: int
+    p_min: int
+    c_number: int
+    filename_index: int
+
+    @property
+    def fv_file_name(self) -> str:
+        return f'FV_{self.number_of_points}_{self.winding_speed}_{self.p_min}_{self.c_number}_{self.filename_index}.txt'
+
+    @property
+    def directory(self):
+        return self.psb_set.bm_set_path
+
+    def get_FV_PSB(self, modelID: int): # holt der Merkmalsvektor von einem bestimmten Modell aus dem PSB # 
+        directory = self.directory
+        sub_dir_1 = str(math.floor(modelID / 100))
+        sub_dir_2 = 'm' + str(modelID)
+        file_path_FV = os.path.join(directory, sub_dir_1, sub_dir_2, self.fv_file_name)
+        # print(file_path_FV)
+        if os.path.isfile(file_path_FV):
+            with open(file_path_FV, 'r') as f:
+                _ = int(f.readline())
+                fv: list[float] = [float(j) for j in f.readline().strip().split(' ')] # type:ignore
+            return fv # type:  ignore
+        else:
+            print('file does not exist')
+            print(file_path_FV)
+            return None
 
 
-def get_classModels_FV_PSB(directory: str, indices): # holt modelle die einer bestimmten Klasse angehoren #type: ignore
-                                                # Die Indizes werden aus dem CLA-File extrahiert
-    fvs = []
-    parentClass_name = indices[0]
-    class_name = indices[1]
-    num_modelsInClass = indices[2]
-    for i in range(num_modelsInClass):
-        modelID = indices[i + 3]
-        fv = get_FV_PSB(directory, modelID) # type: ignore
-        fvs.append(fv) # type: ignore
-    return fvs, class_name, parentClass_name  , num_modelsInClass # type: ignore
+
+    def get_classModels_FV_PSB(self, model_class: ModelClass): # holt modelle die einer bestimmten Klasse angehoren #
+                                                    # Die Indizes werden aus dem CLA-File extrahiert
+        fvs = []
+        for model_node in model_class.models_in_class:
+            fv = self.get_FV_PSB(model_node.model_id)
+            fvs.append(fv)
+        return fvs, model_class.name, model_class.parent_class_name  , model_class.number_of_models 
 
 
 
-################################################3
+    def get_modelsWithClassName(self, model_classes: list[ModelClass]): # holt die FVs aller Modelle mit der dazu gehörigen Informationen wie Klassename
+        models_info: list[ModelInfo] = []
+        for model_class in model_classes:
+            for model_node in model_class.models_in_class:
+                fv = self.get_FV_PSB(model_node.model_id)
+                if fv:
+                    models_info.append(ModelInfo(model_node.model_id, fv, model_class.name, model_class.parent_class_name, model_class.number_of_models))
+        return models_info
 
-def get_modelsWithClassName(directory: str, indices): # holt die FVs aller Modelle mit der dazu gehörigen Informationen wie Klassename
-    models = []
-    for i in indices:
-        parentClass_name = i[0]
-        class_name = i[1]
-        num_modelsInClass = i[2]
-        for j in range(num_modelsInClass):
-            modelID = i[j + 3]
-            fv = get_FV_PSB(directory, modelID)
-            models.append((np.array(fv), class_name, num_modelsInClass, modelID, parentClass_name))
-    return models
+    def get_onemodelpeerclass(self, model_classes: list[ModelClass], model_index: int) -> list['ModelInfo']: # die Modelle im Output wurden als Queries verwerdet, um die Excel-Tabelle zu erstellen
+        models_info: list[ModelInfo] = []
+        for model_class in model_classes:
+            if model_class.number_of_models == 0:
+                continue
+            model_node = model_class.models_in_class[model_index]
+            fv = self.get_FV_PSB(model_node.model_id)
+            if fv:
+                models_info.append(ModelInfo(model_class.models_in_class[model_index].model_id, fv, model_class.name, model_class.parent_class_name, model_class.number_of_models))
+            else:
+                print('AAAAAAAAAAA')
+        return models_info
 
-def get_onemodelpeerclass(directory, indices, k): # die Modelle im Output wurden als Queries verwerdet, um die Excel-Tabelle zu erstellen
-    models = []
-    for i in indices:
-        parentClass_name = i[0]
-        class_name = i[1]
-        num_modelsInClass = i[2]
-        modelID = i[k + 3]
-        fv = get_FV_PSB(directory, modelID)
-        models.append((np.array(fv), class_name, num_modelsInClass, modelID, parentClass_name))
-    return models
+@dataclass
+class ModelInfo:
+    id: int
+    fv: list[float]
+    class_name: str
+    parent_class_name: str
+    total_number_of_models_in_class: int
 
+def takesecond(elem): # # dient für die Sortierung von Listen (Sortierung nach dem 2. Element ihrer Mitglieder)
+    return elem[1] # 
 
-def takesecond(elem): #type: ignore # dient für die Sortierung von Listen (Sortierung nach dem 2. Element ihrer Mitglieder)
-    return elem[1] # type: ignore
-
-def retrieve_models(query, models): # Abtände der Query zu allen Modelle wird berechnet
-    distances = []
-    for i in models:
-        d2 = compute_distance_2_v3(query[0], i[0])
-        distances.append((i, d2))
+def retrieve_models(query: ModelInfo, models: list[ModelInfo]): # Abtände der Query zu allen Modelle wird berechnet
+    distances: list[tuple[ModelInfo, float]] = []
+    for model in models:
+        d2 = compute_distance_2_v3(query.fv, model.fv)
+        distances.append((model, d2))
     distances.sort(key=takesecond)
     return distances
 
-def recall_precision_retrieved_models(distances, queries, k): # wurde für die erstellung der Excel-Tabelle verwendet
+def recall_precision_retrieved_models(distances_list: list[list[tuple[ModelInfo, float]]], queries: list[ModelInfo], k): # wurde für die erstellung der Excel-Tabelle verwendet
     all_results = []
     for i in range(len(queries)):
         q = queries[i]
-        distance = distances[i]
+        distances = distances_list[i]
         # print(distance)
         rk = 0
         results = []
-        results.append(q[4] + ' - ' + q[1] + ' - ' + str(q[3]))
+        results.append(q.parent_class_name + ' - ' + q.class_name + ' - ' + str(q.id))
         for j in range(1, k+1):
             
-            results.append(distance[j][0][4] + ' - ' + distance[j][0][1] + ' - ' + str(distance[j][0][3]))
-            if q[1] == distance[j][0][1]:
+            results.append(distances[j][0].parent_class_name + ' - ' + distances[j][0].class_name + ' - ' + str(distances[j][0].id))
+            if q.class_name == distances[j][0].class_name:
                 rk += 1
-        recall = rk / (q[2] - 1)
+        recall = rk / (q.total_number_of_models_in_class - 1)
         precision = rk / k
-        results.append(q[2]-1)
+        results.append(q.total_number_of_models_in_class-1)
         results.append(rk)
         
         results.append(recall)
@@ -227,7 +212,7 @@ def recall_precision_retrieved_models(distances, queries, k): # wurde für die e
         all_results.append(results)
     return np.array(all_results)
 
-def recall_precision_kk(models, kk): # berechnet Mittelwerte der Trefferquoten und Genauigkeitswerte für alle K in kk
+def recall_precision_kk(models: list[ModelInfo], kk): # berechnet Mittelwerte der Trefferquoten und Genauigkeitswerte für alle K in kk
                                      # damit lässt sich das Genauigkeit-Trefferquote-Digramm erstellt. 
     # try statments and k_ has been given due to some dysfunctioning models (can not be opened) 
     # the error is not in the code but in PSB
@@ -240,19 +225,19 @@ def recall_precision_kk(models, kk): # berechnet Mittelwerte der Trefferquoten u
     for i in models:
         distances = []
         count = 0
-        n = i[2]
+        n = i.total_number_of_models_in_class
         for jjj in range(len(models)):
             j = models[jjj]
-            if np.array_equal(i[0], j[0]):
+            if np.array_equal(np.array(i.fv), np.array(j.fv)):
                 count += 1
                 if count >= 2:
                     pass
             else:
                 try:
-                    d2 = compute_distance_2_v3(i[0], j[0])
+                    d2 = compute_distance_2_v3(i.fv, j.fv)
                     distances.append((jjj, d2))
                 except:
-                    # print(j[3]) # will print the modelID of the defect models
+                    print(j.id) # will print the modelID of the defect models
                     pass
         distances.sort(key=takesecond)
         for kkk in range(len(kk)):
@@ -262,7 +247,7 @@ def recall_precision_kk(models, kk): # berechnet Mittelwerte der Trefferquoten u
             for dd in range(k):
                 try:
                     d = distances[dd]
-                    if i[1] == models[d[0]][1]:
+                    if i.class_name == models[d[0]].class_name:
                         rk += 1
                 except:
                     # print(k)

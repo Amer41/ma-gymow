@@ -1,4 +1,7 @@
 import math
+import numpy as np
+
+from typing import Any
 
 def compute_FSC_v3(coefficients_number: int, f: list[float]) -> tuple[tuple[list[float], list[float]], list[complex]]: # berechnet Fourier-Koeffizienten (a, b und c)
     N = len(f)
