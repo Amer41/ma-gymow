@@ -1,6 +1,6 @@
 from src.psb_modules.retrieve import PSBSet
-from src.modules.parsing import read_off
-from src.modules.object2 import object2
+from src.algorithm_modules.parsing import read_off
+from src.algorithm_modules.object2 import object2
 import math
 
 from dataclasses import dataclass

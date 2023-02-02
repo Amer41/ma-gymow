@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.modules.vector3 import vec3
+from src.algorithm_modules.vector3 import vec3
 import ipyvolume as ipv
 import matplotlib.pyplot as plt
 

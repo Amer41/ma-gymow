@@ -2,7 +2,7 @@
 # Dabei werden die konstanten beim MT-Algorithmus zum Bestimmen
 # der Schnittpunkte zwischen einem Strahl und einem Dreieck
 # berechnet, welche nicht vom Strahl abhängig sind, und in der Klasse gespeichert.
-from src.modules.vector3 import vec3
+from src.algorithm_modules.vector3 import vec3
 
 class triangle:
     # origin = vec3(0,0,0)

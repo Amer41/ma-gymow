@@ -1,4 +1,4 @@
-from src.modules.vector3 import vec3
+from src.algorithm_modules.vector3 import vec3
 import ipyvolume as ipv
 import numpy as np
 #  visualisiert Polygonnetz

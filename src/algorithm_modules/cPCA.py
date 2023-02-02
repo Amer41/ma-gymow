@@ -1,5 +1,5 @@
-from src.modules.vector3 import vec3
-from src.modules.matrix3 import Matrix3
+from src.algorithm_modules.vector3 import vec3
+from src.algorithm_modules.matrix3 import Matrix3
 import numpy.linalg as npl
 import numpy as np
 import math
@@ -105,12 +105,12 @@ def compute_C_I_v3(S: list[float], S_total: float, G1: list[vec3], T1:list[vec3]
         v_1 = T1[ii + 1]
         v_2 = T1[ii + 2]
         g = G1[i]
-        c = g.covariance_matrix(g).multiply_scalar(9)
+        c = g.covariance_matrix(g).multiply_with_scalar(9)
         c.sumup(v_0.covariance_matrix(v_0))
         c.sumup(v_1.covariance_matrix(v_1))
         c.sumup(v_2.covariance_matrix(v_2))
-        c_I.sumup(c.multiply_scalar(S[i]))
-    c_I = c_I.multiply_scalar(1/(12 * S_total))
+        c_I.sumup(c.multiply_with_scalar(S[i]))
+    c_I = c_I.multiply_with_scalar(1/(12 * S_total))
     return c_I
 
 def compute_eigs_v3(c_I_1: Matrix3) -> tuple[vec3, Matrix3]: # bestimmt eigenvekoren und eigenwerte von C_I (über numpy)
