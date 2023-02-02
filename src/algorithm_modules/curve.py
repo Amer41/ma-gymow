@@ -54,7 +54,7 @@ def devide_T_v3(T: list[triangle]) -> list[list[triangle]]: # Um Rechenzeit zu r
     T_1_1_1: list[triangle] = []
     for i in range(len(T)):
         t = T[i]
-        t_T = [t.x, t.y, t.z]
+        t_T = [t.x_coordinate_of_vertices, t.y_coordinate_of_vertices, t.z_coordinate_of_vertices]
         if all(n >= 0 for n in t_T[0]): # +
                                 if all(n >= 0 for n in t_T[1]): # +
                                                         if all(n >= 0 for n in t_T[2]): # +
@@ -173,7 +173,7 @@ def devide_T_v3(T: list[triangle]) -> list[list[triangle]]: # Um Rechenzeit zu r
 
 def intersection_segment_triangle_v3_2(segment: vec3, T: triangle) -> Optional[vec3]: # berchnet schnittpunkt zwischne segment und T, wenn vorhanden
     D = segment
-    denom = D.dot(T.normal)
+    denom = D.dot(T.normal_vector)
     if denom == 0:
         return None # reicht für unsere Zwecke, kann aber verbessert werden (auf der anderen Seite schauen)
     invDenom = 1.0 / denom
@@ -183,7 +183,7 @@ def intersection_segment_triangle_v3_2(segment: vec3, T: triangle) -> Optional[v
     v = D.dot(T.v_constant) * invDenom
     if u + v > 1 or v < 0:
         return None
-    t = T.t * invDenom
+    t = T.t_contsant * invDenom
     if t < 0:
         return None
     else:
