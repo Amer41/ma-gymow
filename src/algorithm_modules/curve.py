@@ -187,7 +187,7 @@ def intersection_segment_triangle_v3_2(segment: vec3, T: triangle) -> Optional[v
     if t < 0:
         return None
     else:
-        return D.multiply_scalar(t)
+        return D.multiply_by_scalar(t)
 
 def compute_X_and_R_from_T_devided_v3(U: list[vec3], V3: list[vec3], F: list[tuple[int, int, int]]) -> tuple[list[vec3], list[float]]: # erstellt 3D-Kurve X, und Abstand-Kurve R
     T3 = compute_T3_v3(V3, F)

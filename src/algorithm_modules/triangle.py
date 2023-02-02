@@ -13,7 +13,7 @@ class triangle:
         self.ab = self.b.sub(self.a)
         self.ac = self.c.sub(self.a)
         self.normal = self.ac.cross(self.ab)
-        self.tvec = self.a.multiply_scalar(-1) # nur wenn Ursprung des Vektors im Ursprung ist (origin - a) = a * -1
+        self.tvec = self.a.multiply_by_scalar(-1) # nur wenn Ursprung des Vektors im Ursprung ist (origin - a) = a * -1
         self.u_constant = self.ac.cross(self.tvec)
         self.v_constant = self.tvec.cross(self.ab)
         self.t = self.v_constant.dot(self.ac)

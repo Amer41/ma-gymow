@@ -51,8 +51,8 @@ def compute_G_v3(T: list[vec3]) -> list[vec3]: # bestimmt die Schwerpunkte aller
 def compute_m_I_v3(S: list[float], S_total: float, G: list[vec3]) -> vec3: # bestimmt der SChwerpunkt des gesamten 3D-Modells m_I
     M = vec3(0, 0, 0)
     for i in range(len(S)):
-        M.sumup(G[i].multiply_scalar(S[i]))
-    m_I = M.multiply_scalar(1/S_total)
+        M.add_to_self(G[i].multiply_by_scalar(S[i]))
+    m_I = M.multiply_by_scalar(1/S_total)
     return m_I
 
 
@@ -82,8 +82,8 @@ def compute_T_S_G_m_I_v3(V: list[vec3], F: list[tuple[int, int, int]]) -> tuple[
         g = vec3(c_x, c_y, c_z)
         G.append(g)
 
-        M.sumup(G[i].multiply_scalar(s))
-    m_I = M.multiply_scalar(1/S_total)
+        M.add_to_self(G[i].multiply_by_scalar(s))
+    m_I = M.multiply_by_scalar(1/S_total)
     return T, S, S_total, G, m_I, normals
     
 def shift_V_v3(V: list[vec3], m_I: vec3) -> list[vec3]: # Zentriert das 3d-Modell, V1 = Menge der zentrierten Eckpunkte
@@ -105,12 +105,12 @@ def compute_C_I_v3(S: list[float], S_total: float, G1: list[vec3], T1:list[vec3]
         v_1 = T1[ii + 1]
         v_2 = T1[ii + 2]
         g = G1[i]
-        c = g.covariance_matrix(g).multiply_with_scalar(9)
-        c.sumup(v_0.covariance_matrix(v_0))
-        c.sumup(v_1.covariance_matrix(v_1))
-        c.sumup(v_2.covariance_matrix(v_2))
-        c_I.sumup(c.multiply_with_scalar(S[i]))
-    c_I = c_I.multiply_with_scalar(1/(12 * S_total))
+        c = vec3.covariance_matrix(g, g).multiply_by_scalar(9)
+        c.add_to_self(vec3.covariance_matrix(v_0, v_0))
+        c.add_to_self(vec3.covariance_matrix(v_1, v_1))
+        c.add_to_self(vec3.covariance_matrix(v_2, v_2))
+        c_I.add_to_self(c.multiply_by_scalar(S[i]))
+    c_I = c_I.multiply_by_scalar(1/(12 * S_total))
     return c_I
 
 def compute_eigs_v3(c_I_1: Matrix3) -> tuple[vec3, Matrix3]: # bestimmt eigenvekoren und eigenwerte von C_I (über numpy)
@@ -132,7 +132,7 @@ def rotate_V1_v3(V1: list[vec3], A: Matrix3) -> list[vec3]: # rotiert V1, V2 = d
     V2: list[vec3] = []
     for v in V1:
         # v = V1[i]
-        v2 = v.multiply_matrix3(A)
+        v2 = v.rith_multiply_by_matrix3(A)
         # v2 = A.multiply_vec3(v)
         V2.append(v2)
     return V2
@@ -199,16 +199,16 @@ def compute_scale_v3(T2: list[vec3], S: list[float], S_total: float, p_min: int)
         b = T2[ii + 1]
         c = T2[ii + 2]
         denom = 1/p_j
-        d_ab = (b.sub(a)).multiply_scalar(denom)
-        d_ac = (c.sub(a)).multiply_scalar(denom)
-        d_g = (d_ab.add(d_ac)).multiply_scalar(1/3)
+        d_ab = (b.sub(a)).multiply_by_scalar(denom)
+        d_ac = (c.sub(a)).multiply_by_scalar(denom)
+        d_g = (d_ab.add(d_ac)).multiply_by_scalar(1/3)
         gamma = s / ((p_j)**2)
         for x in range(p_j - 1):
             for y in range(x+1):
-                g = a.add(d_ab.multiply_scalar((x-y)).add(d_ac.multiply_scalar(y).add(d_g)))
+                g = a.add(d_ab.multiply_by_scalar((x-y)).add(d_ac.multiply_by_scalar(y).add(d_g)))
                 d += gamma*(g.length() + (g.add(d_g)).length())
         for y in range(p_j):
-            g = a.add(d_ab.multiply_scalar(p_j-1-y).add(d_ac.multiply_scalar(y).add(d_g)))
+            g = a.add(d_ab.multiply_by_scalar(p_j-1-y).add(d_ac.multiply_by_scalar(y).add(d_g)))
             d += gamma*g.length()
     d *= 1/S_total
     return d
@@ -218,6 +218,6 @@ def compute_V3_v3(V2: list[vec3], Fl: vec3, scale: float) -> list[vec3]: # V2 wi
     V3: list[vec3] = []
     s = 1 / scale
     for v in V2:
-        v3 = v.multiply_vec3(Fl).multiply_scalar(s)
+        v3 = v.multiply_by_vec3(Fl).multiply_by_scalar(s)
         V3.append(v3)
     return V3
