@@ -1,7 +1,7 @@
-from src.utils.curve import compute_U_v3, compute_X_and_R_from_T_devided_v3
-from src.utils.cPCA import shift_V_v3, compute_T_v3, compute_C_I_v3,compute_eigs_v3, rotate_V1_v3, compute_T_S_G_m_I_v3, compute_flipping_v3, compute_scale_v3, compute_V3_v3
-from src.utils.feature_vectore import compute_FSC_v3, invert_FSC_v3, extract_feasure_vector_v3
-from src.utils.parsing import read_obj_v3, read_off
+from src.modules.curve import compute_U_v3, compute_X_and_R_from_T_devided_v3
+from src.modules.cPCA import shift_V_v3, compute_T_v3, compute_C_I_v3,compute_eigs_v3, rotate_V1_v3, compute_T_S_G_m_I_v3, compute_flipping_v3, compute_scale_v3, compute_V3_v3
+from src.modules.feature_vectore import compute_FSC_v3, invert_FSC_v3, extract_feasure_vector_v3
+from src.modules.parsing import read_obj_v3, read_off
 from src.modules.vector3 import vec3
 import matplotlib.pyplot as plt
 import numpy as np

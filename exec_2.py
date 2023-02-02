@@ -4,7 +4,10 @@ from src.modules.vector3 import vec3
 import ipyvolume as ipv
 import matplotlib.pyplot as plt
 
-from src.psb_modules.retrieve import FVCalculator, PSBSet, PSBAnalyser, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.psb_modules.retrieve import PSBSet, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.psb_modules.calc import FVCalculator
+from src.psb_modules.analyse import PSBAnalyser
+
 psb_set = PSBSet('./psb_v1/')
 
 # Erstellt die Excel-Tabellen

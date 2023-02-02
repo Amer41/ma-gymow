@@ -1,7 +1,9 @@
 # %%
 import numpy as np
 import pandas as pd
-from src.psb_modules.retrieve import FVCalculator, PSBSet, PSBAnalyser, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.psb_modules.retrieve import PSBSet, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.psb_modules.calc import FVCalculator
+from src.psb_modules.analyse import PSBAnalyser
 from src.modules.vector3 import vec3
 import ipyvolume as ipv
 import matplotlib.pyplot as plt
@@ -55,7 +57,7 @@ for i in range(len(res_pres)):
 plt.legend(loc='upper right', prop={'size':40})
 plt.show()
 # %%
-from src.psb_modules.retrieve import FVCalculator, PSBSet, PSBAnalyser, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+
 
 # Erstellt die Excel-Tabellen
 psb_analyse = PSBAnalyser(psb_set, 15000, 200, 64000, 300, 0)
