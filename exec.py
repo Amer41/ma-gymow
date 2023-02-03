@@ -4,7 +4,7 @@ import pandas as pd
 from src.psb_modules.retrieve import PSBSet, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
 from src.psb_modules.calc import FVCalculator
 from src.psb_modules.analyse import PSBAnalyser
-from src.algorithm_modules.vector3 import vec3
+from src.algorithm_modules.vector3 import Vector3
 import ipyvolume as ipv
 import matplotlib.pyplot as plt
 

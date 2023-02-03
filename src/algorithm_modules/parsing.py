@@ -1,14 +1,14 @@
-from src.algorithm_modules.vector3 import vec3
+from src.algorithm_modules.vector3 import Vector3
 
 
-def read_obj_v3(in_file: str) -> tuple[list[vec3], list[tuple[int, int, int]]]: # liest OBJ-Dateiformat, funktioniert nur mit Dreiecken
+def read_obj_v3(in_file: str) -> tuple[list[Vector3], list[tuple[int, int, int]]]: # liest OBJ-Dateiformat, funktioniert nur mit Dreiecken
     faces: list[tuple[int, int, int]] = []
-    vertices: list[vec3] = []
+    vertices: list[Vector3] = []
     with open(in_file, 'r') as f:
         for line in f:
             if line.startswith('v '):
                 _, x, y, z = line.split(' ')
-                vertices.append(vec3(float(x), float(y), float(z)))
+                vertices.append(Vector3(float(x), float(y), float(z)))
             elif line.startswith('f '):
                 _, t1, t2, t3 = line.split(' ')
                 v1 = int(t1.split('/')[0]) - 1
@@ -24,14 +24,14 @@ def read_obj_v3(in_file: str) -> tuple[list[vec3], list[tuple[int, int, int]]]: 
 
 def read_off(in_file: str): # liest OFF-Dokumente, nur für Dreiecke
     faces: list[tuple[int, int, int]] = []
-    vertices: list[vec3] = []
+    vertices: list[Vector3] = []
     with open(in_file, 'r') as f:
         _ = f.readline() # header: OFF
         n_verts, n_faces, n_dontknow = f.readline().strip().split(' ')
         n_verts, n_faces, n_dontknow = int(n_verts), int(n_faces), int(n_dontknow)
         for _ in range(n_verts):
             x, y, z = f.readline().split(' ')
-            vertices.append(vec3(float(x), float(y), float(z)))
+            vertices.append(Vector3(float(x), float(y), float(z)))
         for _ in range(n_faces):
             _, v1, v2, v3 = f.readline().strip().split(' ')   # ['3', '13', '12', '11', '\n']
             faces.append((int(v1), int(v2), int(v3))) # muss nicht mit -1 verrechnet werden

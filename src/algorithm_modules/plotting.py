@@ -1,9 +1,9 @@
-from src.algorithm_modules.vector3 import vec3
+from src.algorithm_modules.vector3 import Vector3
 import ipyvolume as ipv
 import numpy as np
 #  visualisiert Polygonnetz
 # nimmt V (Menge der Eckpunkte) und F (Die Indizes der Eckpunkte, welche die Facetten bilden) als Input
-def plot_mesh_v3(V: list[vec3], F: list[tuple[int, int, int]], color: str='yellow'):
+def plot_mesh_v3(V: list[Vector3], F: list[tuple[int, int, int]], color: str='yellow'):
     x: list[float] = []
     y: list[float] = []
     z: list[float] = []
@@ -15,7 +15,7 @@ def plot_mesh_v3(V: list[vec3], F: list[tuple[int, int, int]], color: str='yello
     ipv.xyzlim(-30,30) # type: ignore
 
 # visualisiert 3d-Kurve
-def plot_3d_curve_v3(U: list[vec3], color:str='red'):
+def plot_3d_curve_v3(U: list[Vector3], color:str='red'):
     x: list[float] = []
     y: list[float] = []
     z: list[float] = []
@@ -27,7 +27,7 @@ def plot_3d_curve_v3(U: list[vec3], color:str='red'):
     y = np.array(y)# type: ignore
     z = np.array(z)# type: ignore
     line = ipv.plot(x, y, z, color=color) # type: ignore
-def scatter_3d_curve_v3(U: list[vec3], color:str='red'): 
+def scatter_3d_curve_v3(U: list[Vector3], color:str='red'): 
     x: list[float] = []
     y: list[float] = []
     z: list[float] = []

@@ -1,165 +1,193 @@
 import math
-from src.algorithm_modules.vector3 import vec3
-from src.algorithm_modules.triangle import triangle
+from src.algorithm_modules.vector3 import Vector3
+from src.algorithm_modules.triangle import Triangle
 from typing import Optional
 
+'''
+Im nachfolgendem wird eine kugelförmige Spirale definiert.
 
-# Die Spirale U wird erstellt
-# def compute_U_v3(number_of_points, winding_speed): # Spirale rotiert um z-Achse
-#     n = number_of_points 
-#     t = [math.pi*i*(1/(n)) for i in range(n)]
-#     q = winding_speed
-#     denom = n - 1
-#     U = []
-#     for i in t:
-#         x = math.cos(q*i*(n/(denom)))*math.sin(i*(n/(denom)))
-#         y = math.sin(q*i*(n/(denom)))*math.sin(i*(n/(denom)))
-#         z = math.cos(i*(n/(denom)))
-#         U.append(vec3(x,y,z))
-#     return U
-def compute_U_v3(number_of_points: int, winding_speed: int) -> list[vec3]: # Spirale rotiert um x-Achse
+Danach werden gemäss dem Suchlgorithmus die ...
+... Schnittpunkte zwischen den Strahlen, welche ...
+... vom Koordinatenursprung ausgehen und auf ...
+... die kugelförmige Spirale zeigen, und dem ...
+... Polygonnetz berechnet.
+
+Die Berechnung der Schnittpunkte erfolgt mittels ...
+... dem Möller-Trumbore-Algorithmus (siehe triangle.py).
+
+Um die Rechenzeit zu reduzieren, werden die Dreiecke ...
+... in 8 Teilmengen aufgeteil.
+
+Sollten mehrere Schnittpunkte gefunden werden, ...
+... wird nur der Punkt gezählt, welche am ...
+... weitesten vom Ursprung liegt.
+
+Wenn keine Schnittpunkte gefunden werden, wird ...
+... der Schnittpunkt in den Ursprung gesetzt.
+'''
+
+def compute_spherical_helix(number_of_points: int, winding_speed: int) -> list[Vector3]:
     n = number_of_points 
-    t: list[float] = [math.pi*i*(1/(n)) for i in range(n)]
+    time: list[float] = [math.pi*i*(1/(n)) for i in range(n)]
     q = winding_speed
     denom = n - 1
-    U: list[vec3] = []
-    for i in t:
-        z = math.cos(q*i*(n/(denom)))*math.sin(i*(n/(denom)))
-        y = math.sin(q*i*(n/(denom)))*math.sin(i*(n/(denom)))
-        x = math.cos(i*(n/(denom)))
-        U.append(vec3(x,y,z))
-    return U
-
-def compute_T3_v3(V3: list[vec3], F: list[tuple[int, int, int]]) -> list[triangle]: # Dreiecke werden in die Klasse Triangle (siehe Oben) eingeführt
-    # Das passiert nach der normalisierung
-    T: list[triangle] = []
-    for f in F:
-        f1, f2, f3 = f
-        t = triangle(V3[f1],V3[f2],V3[f3])
-        T.append(t)
-    return T
-
-def takesecond(elem): #type: ignore # dient für die Sortierung von Listen (Sortierung nach dem 2. Element ihrer Mitglieder)
-    return elem[1] # type: ignore
+    spherical_helix: list[Vector3] = []
+    for t in time:
+        x = math.cos(t*(n/(denom)))
+        y = math.sin(q*t*(n/(denom)))*math.sin(t*(n/(denom)))
+        z = math.cos(q*t*(n/(denom)))*math.sin(t*(n/(denom)))
+        spherical_helix.append(Vector3(x,y,z))
+    return spherical_helix
 
 
-def devide_T_v3(T: list[triangle]) -> list[list[triangle]]: # Um Rechenzeit zu reduzieren, werden die Dreiecke in 8 Teilmengen aufgeteilt
-    T111: list[triangle] = [] # +++ (Vorzeichen von xyz)
-    T11_1: list[triangle] = [] # ++-
-    T1_11: list[triangle] = [] # +-+
-    T1_1_1: list[triangle] = [] # ...
-    T_111: list[triangle] = []
-    T_11_1: list[triangle] = []
-    T_1_11: list[triangle] = []
-    T_1_1_1: list[triangle] = []
-    for i in range(len(T)):
-        t = T[i]
-        t_T = [t.x_coordinate_of_vertices, t.y_coordinate_of_vertices, t.z_coordinate_of_vertices]
-        if all(n >= 0 for n in t_T[0]): # +
-                                if all(n >= 0 for n in t_T[1]): # +
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T111.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T11_1.append(t)
+def compute_triangle_list(vertices: list[Vector3], faces: list[tuple[int, int, int]]) -> list[Triangle]:
+    triangles: list[Triangle] = []
+    for face in faces:
+        vertex_1_index, vertex_2_index, vertex_3_index = face
+        triangle = Triangle(vertices[vertex_1_index],vertices[vertex_2_index],vertices[vertex_3_index])
+        triangles.append(triangle)
+    return triangles
+
+def segment_triangle_intersection(segment: Vector3, triangle: Triangle) -> Optional[Vector3]:
+
+    d = segment
+    denom = d.dot(triangle.normal_vector)
+    if denom == 0:
+        # Schnittpunkte auf der anderen Seite vom Ursprung werden nicht beachtet (negative Abstände einführen?)
+        return None
+    inv_denom = 1.0 / denom
+    u = d.dot(triangle.u_constant) * inv_denom
+    if u > 1 or u < 0:
+        return None
+    v = d.dot(triangle.v_constant) * inv_denom
+    if u + v > 1 or v < 0:
+        return None
+    t = triangle.t_contsant * inv_denom
+    if t < 0:
+        return None
+    else:
+        return d.multiply_by_scalar(t)
+
+def takesecond(elem):
+    # dient für die Sortierung von Listen (Sortierung nach dem 2. Element ihrer Mitglieder)
+    return elem[1]
+
+def devide_triangle_list(triangles: list[Triangle]) -> list[list[Triangle]]:
+    T111: list[Triangle] = [] # +++ (Vorzeichen von xyz)
+    T11_1: list[Triangle] = [] # ++-
+    T1_11: list[Triangle] = [] # +-+
+    T1_1_1: list[Triangle] = [] # ...
+    T_111: list[Triangle] = []
+    T_11_1: list[Triangle] = []
+    T_1_11: list[Triangle] = []
+    T_1_1_1: list[Triangle] = []
+    for i in range(len(triangles)):
+        triangle = triangles[i]
+        triangle_T = [triangle.x_coordinate_of_vertices, triangle.y_coordinate_of_vertices, triangle.z_coordinate_of_vertices]
+        if all(n >= 0 for n in triangle_T[0]): # +
+                                if all(n >= 0 for n in triangle_T[1]): # +
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T111.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T11_1.append(triangle)
                                                         else: # + und -
-                                                            T111.append(t)
-                                                            T11_1.append(t)
-                                elif all(n < 0 for n in t_T[1]): #-
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T1_11.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T1_1_1.append(t)
+                                                            T111.append(triangle)
+                                                            T11_1.append(triangle)
+                                elif all(n < 0 for n in triangle_T[1]): #-
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T1_11.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T1_1_1.append(triangle)
                                                         else: # + und -
-                                                            T1_11.append(t)
-                                                            T1_1_1.append(t)
+                                                            T1_11.append(triangle)
+                                                            T1_1_1.append(triangle)
                                 else: # + und -
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T111.append(t)
-                                                            T1_11.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T11_1.append(t)
-                                                            T1_1_1.append(t)
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T111.append(triangle)
+                                                            T1_11.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T11_1.append(triangle)
+                                                            T1_1_1.append(triangle)
                                                         else: # + und - (*)
-                                                            T111.append(t)
-                                                            T1_11.append(t)
-                                                            T11_1.append(t)
-                                                            T1_1_1.append(t)
-        elif all(n < 0 for n in t_T[0]): #-
-                                if all(n >= 0 for n in t_T[1]): # +
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T_111.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T_11_1.append(t)
+                                                            T111.append(triangle)
+                                                            T1_11.append(triangle)
+                                                            T11_1.append(triangle)
+                                                            T1_1_1.append(triangle)
+        elif all(n < 0 for n in triangle_T[0]): #-
+                                if all(n >= 0 for n in triangle_T[1]): # +
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T_111.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T_11_1.append(triangle)
                                                         else: # + und -
-                                                            T_111.append(t)
-                                                            T_11_1.append(t)
-                                elif all(n < 0 for n in t_T[1]): #-
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T_1_11.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T_1_1_1.append(t)
+                                                            T_111.append(triangle)
+                                                            T_11_1.append(triangle)
+                                elif all(n < 0 for n in triangle_T[1]): #-
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T_1_11.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T_1_1_1.append(triangle)
                                                         else: # + und -
-                                                            T_1_11.append(t)
-                                                            T_1_1_1.append(t)
+                                                            T_1_11.append(triangle)
+                                                            T_1_1_1.append(triangle)
                                 else: # + und -
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T_111.append(t)
-                                                            T_1_11.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T_11_1.append(t)
-                                                            T_1_1_1.append(t)
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T_111.append(triangle)
+                                                            T_1_11.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T_11_1.append(triangle)
+                                                            T_1_1_1.append(triangle)
                                                         else: # + und - (*)
-                                                            T_111.append(t)
-                                                            T_1_11.append(t)
-                                                            T_11_1.append(t)
-                                                            T_1_1_1.append(t)
+                                                            T_111.append(triangle)
+                                                            T_1_11.append(triangle)
+                                                            T_11_1.append(triangle)
+                                                            T_1_1_1.append(triangle)
         else: # + und -
-                                if all(n >= 0 for n in t_T[1]): # +
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T111.append(t)
-                                                            T_111.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T11_1.append(t)
-                                                            T_11_1.append(t)
+                                if all(n >= 0 for n in triangle_T[1]): # +
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T111.append(triangle)
+                                                            T_111.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T11_1.append(triangle)
+                                                            T_11_1.append(triangle)
                                                         else: # + und - (*)
-                                                            T111.append(t)
-                                                            T11_1.append(t)
-                                                            T_111.append(t)
-                                                            T_11_1.append(t)
-                                elif all(n < 0 for n in t_T[1]): #-
-                                                        if all(n >= 0 for n in t_T[2]): # +
-                                                            T1_11.append(t)
-                                                            T_1_11.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #-
-                                                            T1_1_1.append(t)
-                                                            T_1_1_1.append(t)
+                                                            T111.append(triangle)
+                                                            T11_1.append(triangle)
+                                                            T_111.append(triangle)
+                                                            T_11_1.append(triangle)
+                                elif all(n < 0 for n in triangle_T[1]): #-
+                                                        if all(n >= 0 for n in triangle_T[2]): # +
+                                                            T1_11.append(triangle)
+                                                            T_1_11.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #-
+                                                            T1_1_1.append(triangle)
+                                                            T_1_1_1.append(triangle)
                                                         else: # + und - (*)
-                                                            T1_11.append(t)
-                                                            T1_1_1.append(t)
-                                                            T_1_11.append(t)
-                                                            T_1_1_1.append(t)
+                                                            T1_11.append(triangle)
+                                                            T1_1_1.append(triangle)
+                                                            T_1_11.append(triangle)
+                                                            T_1_1_1.append(triangle)
                                 else: # + und -
-                                                        if all(n >= 0 for n in t_T[2]): # + (*)
-                                                            T111.append(t)
-                                                            T1_11.append(t)
-                                                            T_111.append(t)
-                                                            T_1_11.append(t)
-                                                        elif all(n < 0 for n in t_T[2]): #- (*)
-                                                            T11_1.append(t)
-                                                            T1_1_1.append(t)
-                                                            T_11_1.append(t)
-                                                            T_1_1_1.append(t)
+                                                        if all(n >= 0 for n in triangle_T[2]): # + (*)
+                                                            T111.append(triangle)
+                                                            T1_11.append(triangle)
+                                                            T_111.append(triangle)
+                                                            T_1_11.append(triangle)
+                                                        elif all(n < 0 for n in triangle_T[2]): #- (*)
+                                                            T11_1.append(triangle)
+                                                            T1_1_1.append(triangle)
+                                                            T_11_1.append(triangle)
+                                                            T_1_1_1.append(triangle)
                                                         else: # + und - (*) eigentlich ummöglich in 8
-                                                            T111.append(t)
-                                                            T1_11.append(t)
-                                                            T_111.append(t)
-                                                            T_1_11.append(t)
-                                                            T11_1.append(t)
-                                                            T1_1_1.append(t)
-                                                            T_11_1.append(t)
-                                                            T_1_1_1.append(t)
-
-    T_devided = [
+                                                            T111.append(triangle)
+                                                            T1_11.append(triangle)
+                                                            T_111.append(triangle)
+                                                            T_1_11.append(triangle)
+                                                            T11_1.append(triangle)
+                                                            T1_1_1.append(triangle)
+                                                            T_11_1.append(triangle)
+                                                            T_1_1_1.append(triangle)
+    devided_triangle_list = [
         T111,
         T11_1,
         T1_11,
@@ -169,105 +197,88 @@ def devide_T_v3(T: list[triangle]) -> list[list[triangle]]: # Um Rechenzeit zu r
         T_1_11,
         T_1_1_1
     ]
-    return T_devided
+    return devided_triangle_list
 
-def intersection_segment_triangle_v3_2(segment: vec3, T: triangle) -> Optional[vec3]: # berchnet schnittpunkt zwischne segment und T, wenn vorhanden
-    D = segment
-    denom = D.dot(T.normal_vector)
-    if denom == 0:
-        return None # reicht für unsere Zwecke, kann aber verbessert werden (auf der anderen Seite schauen)
-    invDenom = 1.0 / denom
-    u = D.dot(T.u_constant) * invDenom
-    if u > 1 or u < 0:
-        return None
-    v = D.dot(T.v_constant) * invDenom
-    if u + v > 1 or v < 0:
-        return None
-    t = T.t_contsant * invDenom
-    if t < 0:
-        return None
-    else:
-        return D.multiply_by_scalar(t)
 
-def compute_X_and_R_from_T_devided_v3(U: list[vec3], V3: list[vec3], F: list[tuple[int, int, int]]) -> tuple[list[vec3], list[float]]: # erstellt 3D-Kurve X, und Abstand-Kurve R
-    T3 = compute_T3_v3(V3, F)
-    T_devided = devide_T_v3(T3)
-    n = len(U) 
-    R: list[float] = []
-    X: list[vec3] = []
+def compute_X_and_R_from_T_devided_v3(spherical_curve: list[Vector3], vertices: list[Vector3], faces: list[tuple[int, int, int]]) -> tuple[list[Vector3], list[float]]:
+    triangles = compute_triangle_list(vertices, faces)
+    devided_triangle_list = devide_triangle_list(triangles)
+    n = len(spherical_curve) 
+    distances: list[float] = []
+    intersection_points: list[Vector3] = []
     for i in range(n):
-        O: list[tuple[vec3, float]] = []
-        if U[i].x >= 0:
-                        if U[i].y >= 0:
-                                        if U[i].z >= 0:
+        intersection_points_and_distances: list[tuple[Vector3, float]] = []
+        if spherical_curve[i].x >= 0:
+                        if spherical_curve[i].y >= 0:
+                                        if spherical_curve[i].z >= 0:
                                             # print('111')
-                                            for t in T_devided[0]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[0]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
-                                        elif U[i].z < 0:
+                                                    intersection_points_and_distances.append((q, r))
+                                        elif spherical_curve[i].z < 0:
                                             # print('11_1')
-                                            for t in T_devided[1]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[1]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
+                                                    intersection_points_and_distances.append((q, r))
                                         else:
                                             print('Fehler 2')
-                        elif U[i].y < 0:
-                                        if U[i].z >= 0:
+                        elif spherical_curve[i].y < 0:
+                                        if spherical_curve[i].z >= 0:
                                             # print('1_11')
-                                            for t in T_devided[2]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[2]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
-                                        elif U[i].z < 0:
+                                                    intersection_points_and_distances.append((q, r))
+                                        elif spherical_curve[i].z < 0:
                                             # print('1_1_1')
-                                            for t in T_devided[3]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[3]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
+                                                    intersection_points_and_distances.append((q, r))
                                         else:
                                             print('Fehler 3')
                         else:
                             print('Fehler 1')
-        elif U[i].x < 0:
-                        if U[i].y >= 0:
-                                        if U[i].z >= 0:
+        elif spherical_curve[i].x < 0:
+                        if spherical_curve[i].y >= 0:
+                                        if spherical_curve[i].z >= 0:
                                             # print('_111')
-                                            for t in T_devided[4]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[4]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
+                                                    intersection_points_and_distances.append((q, r))
 
-                                        elif U[i].z < 0:
+                                        elif spherical_curve[i].z < 0:
                                             # print('_11_1')
-                                            for t in T_devided[5]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[5]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
+                                                    intersection_points_and_distances.append((q, r))
                                         else:
                                             print('Fehler 5')
-                        elif U[i].y < 0:
-                                        if U[i].z >= 0:
+                        elif spherical_curve[i].y < 0:
+                                        if spherical_curve[i].z >= 0:
                                             # print('_1_11')
-                                            for t in T_devided[6]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[6]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
-                                        elif U[i].z < 0:  
+                                                    intersection_points_and_distances.append((q, r))
+                                        elif spherical_curve[i].z < 0:  
                                             # print('_1_1_1')
-                                            for t in T_devided[7]:
-                                                q = intersection_segment_triangle_v3_2(U[i], t)
+                                            for t in devided_triangle_list[7]:
+                                                q = segment_triangle_intersection(spherical_curve[i], t)
                                                 if q:
                                                     r = q.length()
-                                                    O.append((q, r))
+                                                    intersection_points_and_distances.append((q, r))
                                         else:
                                             print('Fehler 6')
 
@@ -275,12 +286,12 @@ def compute_X_and_R_from_T_devided_v3(U: list[vec3], V3: list[vec3], F: list[tup
                             print('Fehler 4')
         else:
             print('Fehler')
-        if len(O) == False: ### no intersection, work on it later
-            O.append((vec3(0,0,0), 0))
+        if len(intersection_points_and_distances) == False:
+            intersection_points_and_distances.append((Vector3(0,0,0), 0))
         else:
-            O.sort(key=takesecond, reverse=True) # type: ignore
-        X.append(O[0][0])
-        R.append(O[0][1])
-    return X, R
+            intersection_points_and_distances.sort(key=takesecond, reverse=True)
+        intersection_points.append(intersection_points_and_distances[0][0])
+        distances.append(intersection_points_and_distances[0][1])
+    return intersection_points, distances
 
 

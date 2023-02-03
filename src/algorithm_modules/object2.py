@@ -1,8 +1,9 @@
-from src.algorithm_modules.curve import compute_U_v3, compute_X_and_R_from_T_devided_v3
-from src.algorithm_modules.cPCA import shift_V_v3, compute_T_v3, compute_C_I_v3,compute_eigs_v3, rotate_V1_v3, compute_T_S_G_m_I_v3, compute_flipping_v3, compute_scale_v3, compute_V3_v3
-from src.algorithm_modules.feature_vectore import compute_FSC_v3, invert_FSC_v3, extract_feasure_vector_v3
+from src.algorithm_modules.curve import compute_spherical_helix, compute_X_and_R_from_T_devided_v3
+from src.algorithm_modules.cPCA import center_vertices, sort_vertices_by_triangle_T, compute_covariance_matrix_cI,compute_eigs, align_centered_vertices, compute_all_mesh_info, compute_flipping_vector, compute_scaling_factor, scale_and_flipp_normalized_mesh
+from src.algorithm_modules.feature_vectore import extract_feature_vector
+from src.algorithm_modules.fourier import compute_fourier_coefficients, invert_FSC_v3
 from src.algorithm_modules.parsing import read_obj_v3, read_off
-from src.algorithm_modules.vector3 import vec3
+from src.algorithm_modules.vector3 import Vector3
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -17,7 +18,7 @@ class object2: # dtype vec3
     # c_number = 300 # Bestimmt Anzahl Fourier-Koeffizienen im Merkmalsvektor
     plot_scale_U = 5 # skalierung für die visualisierung
     # U = compute_U_v3(number_of_points, winding_speed)
-    def __init__(self, V: list[vec3], F: list[tuple[int, int, int]], number_of_points: int, winding_speed: int, p_min:int, c_number: int):
+    def __init__(self, V: list[Vector3], F: list[tuple[int, int, int]], number_of_points: int, winding_speed: int, p_min:int, c_number: int):
         self.V = V
         self.F = F
         self.number_of_points = number_of_points
@@ -25,25 +26,25 @@ class object2: # dtype vec3
         self.p_min = p_min
         self.c_number = c_number
 
-        self.U = compute_U_v3(self.number_of_points, self.winding_speed)
+        self.U = compute_spherical_helix(self.number_of_points, self.winding_speed)
         # normalisierung
-        self.T, self.S, self.S_total, self.G, self.m_I, self.normals1  = compute_T_S_G_m_I_v3(self.V, self.F)
-        self.V1 = shift_V_v3(self.V, self.m_I)
-        self.T1 = compute_T_v3(self.V1, self.F)
-        self.G1 = shift_V_v3(self.G, self.m_I)
-        self.C_I = compute_C_I_v3(self.S, self.S_total, self.G1, self.T1)
-        self.eig_values, self.A = compute_eigs_v3(self.C_I)
-        self.V2 = rotate_V1_v3(self.V1, self.A)
-        self.T2 = compute_T_v3(self.V2, self.F)
-        self.Fl = compute_flipping_v3(self.T2, self.S, self.S_total)
-        self.scale = compute_scale_v3(self.T2, self.S, self.S_total, self.p_min)
-        self.V3 = compute_V3_v3(self.V2, self.Fl, self.scale)
+        self.T, self.S, self.S_total, self.G, self.m_I, self.normals1  = compute_all_mesh_info(self.V, self.F)
+        self.V1 = center_vertices(self.V, self.m_I)
+        self.T1 = sort_vertices_by_triangle_T(self.V1, self.F)
+        self.G1 = center_vertices(self.G, self.m_I)
+        self.C_I = compute_covariance_matrix_cI(self.S, self.S_total, self.G1, self.T1)
+        self.eig_values, self.A = compute_eigs(self.C_I)
+        self.V2 = align_centered_vertices(self.V1, self.A)
+        self.T2 = sort_vertices_by_triangle_T(self.V2, self.F)
+        self.Fl = compute_flipping_vector(self.T2, self.S, self.S_total)
+        self.scale = compute_scaling_factor(self.T2, self.S, self.S_total, self.p_min)
+        self.V3 = scale_and_flipp_normalized_mesh(self.V2, self.Fl, self.scale)
 
         # extrahierung des Merkmalsvektors fv
         self.X, self.R = compute_X_and_R_from_T_devided_v3(self.U, self.V3, self.F)
-        (self.As, self.Bs), self.Cs = compute_FSC_v3(self.c_number, self.R)
+        (self.As, self.Bs), self.Cs = compute_fourier_coefficients(self.c_number, self.R)
         self.R_real = invert_FSC_v3(self.number_of_points, (self.As, self.Bs))
-        self.fv = extract_feasure_vector_v3(self.Cs)
+        self.fv = extract_feature_vector(self.Cs)
 
 
     # Polygonnetze können aus OBJ oder OFF gelesen werden

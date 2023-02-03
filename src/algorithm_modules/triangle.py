@@ -1,6 +1,6 @@
-from src.algorithm_modules.vector3 import vec3
+from src.algorithm_modules.vector3 import Vector3
 
-class triangle:
+class Triangle:
     '''
     Diese Klasse soll die Dreiecke im Polygonnetz representieren.
     Sie wurde erstellt, um die Rechengeschwindigkeit ...
@@ -20,7 +20,7 @@ class triangle:
     https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection.html
     '''
     
-    def __init__(self, v1: vec3 , v2: vec3, v3: vec3):
+    def __init__(self, v1: Vector3 , v2: Vector3, v3: Vector3):
         self.a = v1
         self.b = v2
         self.c = v3

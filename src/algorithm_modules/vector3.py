@@ -7,7 +7,7 @@ from .matrix3 import Matrix3
 
 
 @dataclass
-class vec3:
+class Vector3:
     '''
     Eine Klasse für drei-dimensionale Vectoren:
     Diese Klasse wurde selbstständig erstellt, ...
@@ -22,49 +22,49 @@ class vec3:
     y: float
     z: float
 
-    def dot(self, other: 'vec3') -> float:
+    def dot(self, other: 'Vector3') -> float:
         return self.x * other.x + self.y * other.y + self.z * other.z
 
-    def sub(self, other: 'vec3') -> 'vec3':
-        return vec3(self.x - other.x,
+    def sub(self, other: 'Vector3') -> 'Vector3':
+        return Vector3(self.x - other.x,
                     self.y - other.y,
                     self.z - other.z)
 
-    def __sub__(self, other: 'vec3'):
+    def __sub__(self, other: 'Vector3'):
         return self.sub(other)
 
-    def add(self, other: 'vec3') -> 'vec3':
-        return vec3(self.x + other.x,
+    def add(self, other: 'Vector3') -> 'Vector3':
+        return Vector3(self.x + other.x,
                     self.y + other.y,
                     self.z + other.z)
 
-    def __add__(self, other: 'vec3'):
+    def __add__(self, other: 'Vector3'):
         return self.add(other)
 
-    def add_to_self(self, other: 'vec3'):
+    def add_to_self(self, other: 'Vector3'):
         self.x += other.x
         self.y += other.y
         self.z += other.z
 
-    def multiply_by_scalar(self, scalar: float) -> 'vec3':
-        return vec3(self.x * scalar,
+    def multiply_by_scalar(self, scalar: float) -> 'Vector3':
+        return Vector3(self.x * scalar,
                     self.y * scalar,
                     self.z * scalar)
 
-    def multiply_by_vec3(self, other: 'vec3') -> 'vec3':
-        return vec3(self.x * other.x,
+    def multiply_by_vec3(self, other: 'Vector3') -> 'Vector3':
+        return Vector3(self.x * other.x,
                     self.y * other.y,
                     self.z * other.z)
 
-    def rith_multiply_by_matrix3(self, matrix3: 'Matrix3'):
-        return vec3(matrix3.x_0 * self.x + matrix3.y_0 * self.y + matrix3.z_0 * self.z,
+    def right_multiply_by_matrix3(self, matrix3: 'Matrix3'):
+        return Vector3(matrix3.x_0 * self.x + matrix3.y_0 * self.y + matrix3.z_0 * self.z,
                     matrix3.x_1 * self.x + matrix3.y_1 * self.y + matrix3.z_1 * self.z,
                     matrix3.x_2 * self.x + matrix3.y_2 * self.y + matrix3.z_2 * self.z)
 
     
 
-    def cross(self, other: 'vec3') -> 'vec3':
-        return vec3(self.y * other.z - self.z * other.y,
+    def cross(self, other: 'Vector3') -> 'Vector3':
+        return Vector3(self.y * other.z - self.z * other.y,
                     self.z * other.x - self.x * other.z,
                     self.x * other.y - self.y * other.x)
 
@@ -77,7 +77,7 @@ class vec3:
         return str((self.x, self.y, self.z))
 
     @staticmethod
-    def covariance_matrix(vector_1: 'vec3', vector_2: 'vec3') -> 'Matrix3':
+    def covariance_matrix(vector_1: 'Vector3', vector_2: 'Vector3') -> 'Matrix3':
         xx = vector_1.x * vector_2.x
         xy = vector_1.x * vector_2.y
         xz = vector_1.x * vector_2.z
@@ -88,7 +88,7 @@ class vec3:
                        xy, yy, yz,
                        xz, yz, zz)
 
-    def to_array(self: 'vec3') -> np.ndarray:
+    def to_array(self: 'Vector3') -> np.ndarray:
         return np.array([self.x, self.y, self.z], dtype=np.float64) # type: ignore
 
 
@@ -104,22 +104,22 @@ class vec3:
             return False
         return True
 
-    def isequal_vec3_vec3(self, other:'vec3') -> bool:
+    def isequal_vec3_vec3(self, other:'Vector3') -> bool:
         if not self.x == other.x or not self.y == other.y or not self.z == other.z:
             return False
         return True
 
-    def isequal_vec3_vec3_rounded(self, other: 'vec3', r:int) -> bool:
+    def isequal_vec3_vec3_rounded(self, other: 'Vector3', r:int) -> bool:
         if not round(self.x , r) == round(other.x, r) or not round(self.y , r)== round(other.y, r) or not round(self.z , r)== round(other.z, r):
             return False
         return True
         
     @classmethod
-    def from_array(cls, array) -> 'vec3':                
+    def from_array(cls, array) -> 'Vector3':                
         x,y,z = array
         return cls(float(x), float(y), float(z))
         
     @classmethod
-    def row_vectors_from_matrix(cls, matrix3: 'Matrix3') -> tuple['vec3', 'vec3', 'vec3']:
+    def row_vectors_from_matrix(cls, matrix3: 'Matrix3') -> tuple['Vector3', 'Vector3', 'Vector3']:
         return cls(matrix3.x_0, matrix3.y_0, matrix3.z_0), cls(matrix3.x_1, matrix3.y_1, matrix3.z_1), cls(matrix3.x_2, matrix3.y_2, matrix3.z_2)
 

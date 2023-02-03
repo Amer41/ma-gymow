@@ -3,7 +3,7 @@ import math
 from src.algorithm_modules.object2 import object2
 from src.algorithm_modules.parsing import read_off
 from typing import Union, Any
-from src.algorithm_modules.feature_vectore import compute_distance_2_v3
+from src.algorithm_modules.feature_vectore import compute_distance
 from src.psb_modules.classification import PSDClassification, ModelClass
 import numpy as np
 from dataclasses import dataclass
@@ -39,7 +39,7 @@ def takesecond(elem): # # dient für die Sortierung von Listen (Sortierung nach 
 def retrieve_models(query: ModelInfo, models: list[ModelInfo]): # Abtände der Query zu allen Modelle wird berechnet
     distances: list[tuple[ModelInfo, float]] = []
     for model in models:
-        d2 = compute_distance_2_v3(query.fv, model.fv)
+        d2 = compute_distance(query.fv, model.fv)
         distances.append((model, d2))
     distances.sort(key=takesecond)
     return distances
@@ -90,7 +90,7 @@ def recall_precision_kk(models: list[ModelInfo], kk): # berechnet Mittelwerte de
                     pass
             else:
                 try:
-                    d2 = compute_distance_2_v3(i.fv, j.fv)
+                    d2 = compute_distance(i.fv, j.fv)
                     distances.append((jjj, d2))
                 except:
                     print(j.id) # will print the modelID of the defect models

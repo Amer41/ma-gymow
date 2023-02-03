@@ -1,13 +1,13 @@
 
-from src.algorithm_modules.vector3 import vec3
+from src.algorithm_modules.vector3 import Vector3
 
 def test__vec_dot():
-    a = vec3(1,2,3)
-    b = vec3(4,5,6)
-    c = vec3(1,1,1)
-    d = vec3(0,0,0)
-    e = vec3(-5,-4,-3)
-    f = vec3(-3,2,-1)
+    a = Vector3(1,2,3)
+    b = Vector3(4,5,6)
+    c = Vector3(1,1,1)
+    d = Vector3(0,0,0)
+    e = Vector3(-5,-4,-3)
+    f = Vector3(-3,2,-1)
     assert a.dot(b) == (1*4) + (2*5) + (3*6) == b.dot(a)
     assert a.dot(c) == 1+2+3 == c.dot(a)
     assert a.dot(d) == 0 == d.dot(a)
