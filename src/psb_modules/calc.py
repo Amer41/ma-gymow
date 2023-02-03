@@ -1,5 +1,5 @@
 from src.psb_modules.retrieve import PSBSet
-from src.algorithm_modules.parsing import read_off
+from src.algorithm_modules.utils.parsing import read_off
 from src.algorithm_modules.object2 import object2
 import math
 

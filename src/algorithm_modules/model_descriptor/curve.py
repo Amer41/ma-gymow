@@ -1,6 +1,6 @@
 import math
-from src.algorithm_modules.vector3 import Vector3
-from src.algorithm_modules.triangle import Triangle
+from src.algorithm_modules.data_structure.vector3 import Vector3
+from src.algorithm_modules.data_structure.triangle import Triangle
 from typing import Optional
 
 '''

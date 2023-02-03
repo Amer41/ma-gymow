@@ -1,9 +1,9 @@
-from src.algorithm_modules.curve import compute_spherical_helix, compute_X_and_R_from_T_devided_v3
-from src.algorithm_modules.cPCA import center_vertices, sort_vertices_by_triangle_T, compute_covariance_matrix_cI,compute_eigs, align_centered_vertices, compute_all_mesh_info, compute_flipping_vector, compute_scaling_factor, scale_and_flipp_normalized_mesh
-from src.algorithm_modules.feature_vectore import extract_feature_vector
-from src.algorithm_modules.fourier import compute_fourier_coefficients, invert_FSC_v3
-from src.algorithm_modules.parsing import read_obj_v3, read_off
-from src.algorithm_modules.vector3 import Vector3
+from src.algorithm_modules.model_descriptor.curve import compute_spherical_helix, compute_X_and_R_from_T_devided_v3
+from src.algorithm_modules.model_descriptor.cPCA import center_vertices, sort_vertices_by_triangle_T, compute_covariance_matrix_cI,compute_eigs, align_centered_vertices, compute_all_mesh_info, compute_flipping_vector, compute_scaling_factor, scale_and_flipp_normalized_mesh
+from src.algorithm_modules.model_descriptor.feature_vectore import extract_feature_vector
+from src.algorithm_modules.model_descriptor.fourier import compute_fourier_coefficients, invert_FSC_v3
+from src.algorithm_modules.utils.parsing import read_obj_v3, read_off
+from src.algorithm_modules.data_structure.vector3 import Vector3
 import matplotlib.pyplot as plt
 import numpy as np
 import math

@@ -1,5 +1,5 @@
 
-from src.algorithm_modules.vector3 import Vector3
+from src.algorithm_modules.data_structure.vector3 import Vector3
 
 def test__vec_dot():
     a = Vector3(1,2,3)

@@ -1,4 +1,4 @@
-from src.algorithm_modules.vector3 import Vector3
+from src.algorithm_modules.data_structure.vector3 import Vector3
 
 
 def read_obj_v3(in_file: str) -> tuple[list[Vector3], list[tuple[int, int, int]]]: # liest OBJ-Dateiformat, funktioniert nur mit Dreiecken

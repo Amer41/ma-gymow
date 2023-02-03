@@ -1,6 +1,5 @@
 import math
 
-
 def compute_fourier_coefficients(coefficients_number: int, signal: list[float]) -> tuple[tuple[list[float], list[float]], list[complex]]:
     N = len(signal)
     period_length = math.pi

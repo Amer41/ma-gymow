@@ -12,7 +12,7 @@ class Vector3:
     Eine Klasse für drei-dimensionale Vectoren:
     Diese Klasse wurde selbstständig erstellt, ...
     ... um die rechengeschwindigkeit zu optimieren.
-    vec3 = [
+    Vector3 = [
         x
         y
         z
