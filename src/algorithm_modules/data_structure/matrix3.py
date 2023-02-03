@@ -6,15 +6,13 @@ from dataclasses import dataclass
 @dataclass
 class Matrix3:
     '''
-    Eine Klasse für 3x3-Matrizen:
-    Diese Klasse wurde selbstständig erstellt, ...
-    ... um die rechengeschwindigkeit zu optimieren.
     Matrix3 = [
         x_0, y_0, z_0
         x_1, y_1, z_1
         x_2, y_2, z_2
     ]
     '''
+
     x_0: float
     y_0: float
     z_0: float

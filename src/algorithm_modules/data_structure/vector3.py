@@ -9,9 +9,6 @@ from .matrix3 import Matrix3
 @dataclass
 class Vector3:
     '''
-    Eine Klasse für drei-dimensionale Vectoren:
-    Diese Klasse wurde selbstständig erstellt, ...
-    ... um die rechengeschwindigkeit zu optimieren.
     Vector3 = [
         x
         y
