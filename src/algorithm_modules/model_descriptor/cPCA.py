@@ -3,21 +3,6 @@ from src.algorithm_modules.data_structure.matrix3 import Matrix3
 import numpy.linalg as npl
 import numpy as np
 import math
-'''
-cPCA = continuous Principle Component Analysis;
-auf deutsch: kontinuierliche Hauptkomponentenanalyse
-
-In diesem Modul werden die Funktionen definiert, ...
-welche die kontinuierliche Hauptkomponentenanalyse ...
-vollzeiehen. 
-
-Der Algorithmus wurde aus folgender Quelle entnommen ...
-... und selbständig implementiert*:
-"D. V. Vranic et al., «Pose Estimation,» in 3D Model Retrieval, 2003, pp. 61-76"
-
-* Die einzige Ausnahme ist der Code zur "compute_scaling_factor"-Funtion ...
-... wurde eins zu eins von einem Pseudo-Code übernommen.
-'''
 
 def sort_vertices_by_triangle_T(vertices_V: list[Vector3], faces_F: list[tuple[int, int, int]]) -> list[Vector3]:
     vertices_sorted_by_triangle: list[Vector3] = [] # Achtung: Eckpunkte werden mehrmals aufgeführt

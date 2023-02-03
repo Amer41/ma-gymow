@@ -1,7 +1,7 @@
 from src.algorithm_modules.data_structure.vector3 import Vector3
 
-
-def read_obj_v3(in_file: str) -> tuple[list[Vector3], list[tuple[int, int, int]]]: # liest OBJ-Dateiformat, funktioniert nur mit Dreiecken
+      
+def read_obj_file(in_file: str) -> tuple[list[Vector3], list[tuple[int, int, int]]]:
     faces: list[tuple[int, int, int]] = []
     vertices: list[Vector3] = []
     with open(in_file, 'r') as f:
@@ -18,11 +18,12 @@ def read_obj_v3(in_file: str) -> tuple[list[Vector3], list[tuple[int, int, int]]
     if not len(faces) or not len(vertices):
         raise ValueError(f'error, check file: {in_file}')
     else:
+         # vertices = V (Menge der Eckpunkte), faces = F (Die Indizes der Eckpunkte, welche die Facetten bilden) 
         return vertices, faces
-# vertices = V (Menge der Eckpunkte), faces = F (Die Indizes der Eckpunkte, welche die Facetten bilden)        
+ 
 
 
-def read_off(in_file: str): # liest OFF-Dokumente, nur für Dreiecke
+def read_off_file(in_file: str):
     faces: list[tuple[int, int, int]] = []
     vertices: list[Vector3] = []
     with open(in_file, 'r') as f:
@@ -33,7 +34,7 @@ def read_off(in_file: str): # liest OFF-Dokumente, nur für Dreiecke
             x, y, z = f.readline().split(' ')
             vertices.append(Vector3(float(x), float(y), float(z)))
         for _ in range(n_faces):
-            _, v1, v2, v3 = f.readline().strip().split(' ')   # ['3', '13', '12', '11', '\n']
+            _, v1, v2, v3 = f.readline().strip().split(' ')   # example: ['3', '13', '12', '11', '\n']
             faces.append((int(v1), int(v2), int(v3))) # muss nicht mit -1 verrechnet werden
     if not len(faces) or not len(vertices):
         raise ValueError(f'error, check file: {in_file}')

@@ -1,9 +1,9 @@
 import os
 import math
 from src.algorithm_modules.object2 import object2
-from src.algorithm_modules.utils.parsing import read_off
+from src.algorithm_modules.utils.parsing import read_off_file
 from typing import Union, Any
-from src.algorithm_modules.model_descriptor.feature_vectore import compute_distance
+from src.algorithm_modules.model_descriptor.feature_vector import compute_distance
 from src.psb_modules.classification import PSDClassification, ModelClass
 import numpy as np
 from dataclasses import dataclass
