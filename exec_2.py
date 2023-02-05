@@ -4,7 +4,8 @@ from src.algorithm_modules.data_structure.vector3 import Vector3
 import ipyvolume as ipv
 import matplotlib.pyplot as plt
 
-from src.psb_modules.retrieve import PSBSet, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.retrieval_moduls.retrieve import recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.psb_modules.psb_set import PSBSet
 from src.psb_modules.calc import FVCalculator
 from src.psb_modules.analyse import PSBAnalyser
 
