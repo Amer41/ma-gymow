@@ -1,33 +1,30 @@
 # **3D model descriptor**
 
-Die Formbeschreibung und die Extrahierung des Merkmalsvektor erfoglt gemäss dem Algorithmus, welcher in
-<br><br>
-&nbsp;&nbsp;&nbsp;&nbsp;"E. Ait Lmaati et al., «A 3-D Search engine based on Fourier series,» in Computer Vision and Image Understanding, 2010, pp. 1-7, Band: 114." 
-<br><br>
-beschrieben wurde.
+Die untermodule in diesem Modul Definieren die Funktionen welche zur Extrahierung des Merkmalsvektors von 3D-Modelle eingesetzt werden. <br><br>
+Der Algorithmus wurde aus dem folgenden Paper entnommen und selbstängig implementiert:
+<p align="center">
+*E. Ait Lmaati et al., «A 3-D Search engine based on Fourier series,» in Computer Vision and Image Understanding, 2010, pp. 1-7, Band: 114.*
+</p>
 
 ## **continuous Principle Component Analysis (cPCA)**
 
 - auf deutsch: kontinuierliche Hauptkomponentenanalyse.
 
-- In diesem Schritt werden die Modelle normalisiert ...
-    1. ... zentriert (verschiebung)
-    2. ... entlang der x-achse ausgerichtet (rotation/reflexion)
-    3. ... auf eine Standardgrösse skaliert
-
-- Der Algorithmus wurde aus folgender Quelle entnommen und selbständig implementiert*:
-    - D. V. Vranic et al., «Pose Estimation,» in 3D Model Retrieval, 2003, pp. 61-76
+- Der Algorithmus für die Hauptkomponentenanalyse wurde aus folgender Quelle entnommen und selbständig implementiert*:
+    - D. V. Vranic et al., «Pose Estimation,» in 3D Model Retrieval, 2003, pp. 61-76 <br><br>
     - *Die einzige Ausnahme ist die "compute_scaling_factor"-Funtion. Diese wurde eins zu eins von einem Pseudo-Code in der Quelle übernommen.
 
+## **mt_intersection_algorithm**
+- Möller-Trumbore-Algorithmus (siehe triangle.py).
+- Berechnung der Schnittpunkte zwischen Strahen und Dreiecken
+
 ## **curve**
-- Hier wird eine 3D-Kurve um das Model gespannt:
-    1. Es wird eine kugelförmige Spirale definiert.
-    2. Danach werden die Schnittpunkte zwischen den Strahlen, welche vom Koordinatenurprung ausgehen und auf die Spirale zeigen, und dem Model berechent
-        - Dazu wird der  Möller-Trumbore-Algorithmus eingesetzt (siehe triangle.py)
-    3. Zum Schluss
-- Um die Rechenzeit zu reduzieren, werden die Dreiecke des Polygonnetzes in 8 Teilmengen aufgeteil.
-- Sollten mehrere Schnittpunkte gefunden werden, wird nur der Punkt gezählt, welche am weitesten vom Ursprung liegt.
-- Wenn keine Schnittpunkte gefunden werden, wird der Schnittpunkt in den Ursprung gesetzt.
+- Definition der Spirale
+- Spannung einer zur Spirale homöomorphenen 3D-Kurve um ein 3D-Objekt
+- Zur Berechnung:
+    - Um die Rechenzeit zu reduzieren, werden die Dreiecke des Polygonnetzes in 8 Teilmengen aufgeteil.
+    - Sollten mehrere Schnittpunkte gefunden werden, wird nur der Punkt gezählt, welche am weitesten vom Ursprung liegt.
+    - Wenn keine Schnittpunkte gefunden werden, wird der Schnittpunkt in den Ursprung gesetzt. 
 
 ## **fourier**
 - Da können die Fourier-Koeffizienten von einem beliebigen Signal berechent.
@@ -37,4 +34,4 @@ beschrieben wurde.
 
 ## **feature_vector**
 - Extrahierung der Merkmalsvektor
-- Die Distanzfunktionen zwischen zwei Merkmalsvektoren
+- Definition der Distanzfunktion zwischen zwei Merkmalsvektoren

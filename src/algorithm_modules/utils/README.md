@@ -7,6 +7,6 @@
 - **Achtung**: Die implementierten Funktionen sind nur bei Polygonnetze, welche aus Dreiecken bestehen, anwendbar.
 
 ## **plotting**
-- Der Modul "ipyvolume" wird die Visualisierung aller Zwsichenschritte im Suchalgorithmus verwendet.
+- Der Modul "ipyvolume" wird für die Visualisierung von 3D-Polygonnetze und -Kurven.
 - Für mehr Informationen zur Funktionsweise siehe:
     - https://www.youtube.com/watch?v=hOKa8klJPyo

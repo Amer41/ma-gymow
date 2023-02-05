@@ -61,7 +61,7 @@ def compute_fourier_coefficients(coefficients_number: int, signal: list[float]) 
 #     As[0] /= 2
 #     return (As, Bs), Cs
         
-def invert_FSC_v3(number_of_points: int, As_and_Bs_fourier_coefficents: tuple[list[float], list[float]]) -> list[float]: # rekonstruiert R aus Fourier-Koeffizienten
+def invert_FSC(number_of_points: int, As_and_Bs_fourier_coefficents: tuple[list[float], list[float]]) -> list[float]: # rekonstruiert R aus Fourier-Koeffizienten
     As = As_and_Bs_fourier_coefficents[0]
     Bs = As_and_Bs_fourier_coefficents[1]
     N = number_of_points

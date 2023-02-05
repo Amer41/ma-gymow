@@ -2,7 +2,6 @@ import math
 from src.algorithm_modules.data_structure.vector3 import Vector3
 from src.algorithm_modules.data_structure.triangle import Triangle
 from src.algorithm_modules.model_descriptor.mt_intersection_algorithm import segment_triangle_intersection, compute_triangle_list
-from typing import Optional
 
 
 def compute_spherical_helix(number_of_points: int, winding_speed: int) -> list[Vector3]:
@@ -150,7 +149,7 @@ def devide_triangle_list(triangles: list[Triangle]) -> list[list[Triangle]]:
     return devided_triangle_list
 
 
-def compute_X_and_R_from_T_devided_v3(spherical_curve: list[Vector3], vertices: list[Vector3], faces: list[tuple[int, int, int]]) -> tuple[list[Vector3], list[float]]:
+def compute_3D_curve_X_and_its_distance_from_origin_R(spherical_curve: list[Vector3], vertices: list[Vector3], faces: list[tuple[int, int, int]]) -> tuple[list[Vector3], list[float]]:
     triangles = compute_triangle_list(vertices, faces)
     devided_triangle_list = devide_triangle_list(triangles)
     n = len(spherical_curve) 
