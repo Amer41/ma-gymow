@@ -10,7 +10,7 @@ import math
 import ipyvolume as ipv
 
 
-class object2:
+class FeatureVectorExtractor:
     '''
     number_of_points: Anzahl Punkte auf der 3D-Kurve
     winding_speed: Windungszahl der 3D-Kurve
@@ -43,8 +43,8 @@ class object2:
 
         # --------------- extrahierung des Merkmalsvektors -------------------
 
-        self._3d_curve_X, self._3d_curve_R = compute_3D_curve_X_and_its_distance_from_origin_R(self.spherical_helix, self.normalized_vertices_V3, self.F)
-        (self.As_fourier_coefs, self.Bs_fourier_coefs), self.Cs_fourier_coefs = compute_fourier_coefficients(self.c_number, self._3d_curve_R)
+        self._3d_curve_X, self._2d_curve_R = compute_3D_curve_X_and_its_distance_from_origin_R(self.spherical_helix, self.normalized_vertices_V3, self.F)
+        (self.As_fourier_coefs, self.Bs_fourier_coefs), self.Cs_fourier_coefs = compute_fourier_coefficients(self.c_number, self._2d_curve_R)
         self.reconstructed_2d_curve_R = invert_FSC(self.number_of_points, (self.As_fourier_coefs, self.Bs_fourier_coefs))
         self.feature_vector = extract_feature_vector(self.Cs_fourier_coefs)
 
@@ -59,7 +59,7 @@ class object2:
         return cls(V, F,  number_of_points, winding_speed, p_min, c_number)
     
 
-    def distance(self, other: 'object2'):
+    def distance(self, other: 'FeatureVectorExtractor'):
         N = len(self.feature_vector)
         d2 = 0
         for i in range(N):

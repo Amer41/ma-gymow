@@ -1,6 +1,6 @@
 import os
 import math
-from src.algorithm_modules.object2 import object2
+from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtractor
 from src.algorithm_modules.utils.parsing import read_off_file
 from typing import Union, Any
 from src.algorithm_modules.model_descriptor.feature_vector import compute_distance

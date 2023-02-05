@@ -1,6 +1,6 @@
 from src.psb_modules.retrieve import PSBSet
 from src.algorithm_modules.utils.parsing import read_off_file
-from src.algorithm_modules.object2 import object2
+from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtractor
 import math
 
 from dataclasses import dataclass
@@ -40,7 +40,7 @@ class FVCalculator():
                 file_path_off = os.path.join(dirpath, i)
                 vertices, faces = read_off_file(file_path_off)
                 print(file_path_off)
-                obj = object2(vertices, faces, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
+                obj = FeatureVectorExtractor(vertices, faces, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
                 file_path_FV = os.path.join(dirpath, self.fv_file_name)
                 # file_path_X = os.path.join(dirpath, 'X.txt') # die Koordinaten der X-Kurve können auch erstellt werden
                 with open(file_path_FV, 'w') as f:
@@ -77,7 +77,7 @@ class FVCalculator():
         file_path_FV = os.path.join(directory, sub_dir_1, sub_dir_2, sub_dir_2 + '.off')
         # print(file_path_FV)
         if os.path.isfile(file_path_FV):
-            obj = object2.from_off(file_path_FV, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
+            obj = FeatureVectorExtractor.from_off(file_path_FV, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
             return obj
         else:
             print('file does not exist')
