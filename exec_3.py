@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 import pandas as pd
-from src.psb_modules.retrieve import PSBSet, recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.psb_modules.retrieve import recall_precision_kk, recall_precision_retrieved_models, retrieve_models
 from src.psb_modules.calc import FVCalculator
 from src.psb_modules.analyse import PSBAnalyser
 from src.algorithm_modules.data_structure.vector3 import Vector3

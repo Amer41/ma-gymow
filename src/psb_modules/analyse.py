@@ -1,4 +1,5 @@
-from src.psb_modules.retrieve import PSBSet, ModelInfo
+from src.psb_modules.retrieve import ModelInfo
+from src.psb_modules.psb_set import PSBSet
 from src.psb_modules.classification import ModelClass
 
 from dataclasses import dataclass

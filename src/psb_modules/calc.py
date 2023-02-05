@@ -1,4 +1,4 @@
-from src.psb_modules.retrieve import PSBSet
+from src.psb_modules.psb_set import PSBSet
 from src.algorithm_modules.utils.parsing import read_off_file
 from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtractor
 import math
