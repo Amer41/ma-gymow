@@ -1,4 +1,3 @@
-# %%
 from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import PSBFVCalculator
 from src.psb_modules.analyse import PSBAnalyser
@@ -20,4 +19,3 @@ plot_recall_precision_curves([recall_precision_curve])
 write_average_recall_precision_curve_to_csv(recall_precision_curve)
 
 create_deatiled_csv_report(psb_analyser)
-# %%

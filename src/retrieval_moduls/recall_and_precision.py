@@ -17,7 +17,7 @@ class ModelInfo:
 def takesecond(elem):
     return elem[1]
 
-def retrieve_models(query: ModelInfo, models: list[ModelInfo]) -> list[tuple[ModelInfo, float]]: # Abtände der Query zu allen Modelle wird berechnet
+def calculate_distances(query: ModelInfo, models: list[ModelInfo]) -> list[tuple[ModelInfo, float]]: # Abtände der Query zu allen Modelle wird berechnet
     distances: list[tuple[ModelInfo, float]] = []
     for model in models:
         d2 = compute_distance(query.fv, model.fv)
@@ -52,7 +52,7 @@ def retrieve_nearest_k_neigbors(distances_list: list[list[tuple[ModelInfo, float
 
 
 
-def compute_average_recall_precision_curve(models: list[ModelInfo], neignors_number_list: list[int]): # berechnet Mittelwerte der Trefferquoten und Genauigkeitswerte für alle K in kk
+def compute_average_recall_precision_curve(models: list[ModelInfo], neignors_number_list: list[int] = [k for k in range(1,901)]): # berechnet Mittelwerte der Trefferquoten und Genauigkeitswerte für alle K in kk
                                      # damit lässt sich das Genauigkeit-Trefferquote-Digramm erstellt. 
     
     recall_curves = []
@@ -75,6 +75,7 @@ def compute_average_recall_precision_curve(models: list[ModelInfo], neignors_num
                 d2 = compute_distance(i.fv, model.fv)
                 distances.append((model_index, d2))
         distances.sort(key=takesecond)
+        # Genaigkeit-Trefferquote-Werte bei zunehmendes k
         for nighbors_number_index in range(len(neignors_number_list)):
             nighbors_number = neignors_number_list[nighbors_number_index]
             rk = 0
@@ -96,5 +97,6 @@ def compute_average_recall_precision_curve(models: list[ModelInfo], neignors_num
                 precision_curves[nighbors_number_index].append(precision)
     recall_curves_array = np.array(recall_curves)
     precision_curves_array = np.array(precision_curves)
-    return np.array([np.mean(recall_curves_array, axis=1), np.mean(precision_curves_array, axis=1)]).T
+    recall_precision_curve = np.array([np.mean(recall_curves_array, axis=1), np.mean(precision_curves_array, axis=1)]).T
+    return recall_precision_curve
 

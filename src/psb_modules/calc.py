@@ -9,7 +9,7 @@ import os
 
 
 @dataclass
-class FVCalculator(PSBFVVariantion):
+class PSBFVCalculator(PSBFVVariantion):
 
     def compute_all_feature_vectors(self): # erstellt den Merkmalsvektor für alle Modelle im Benchmark
                                 # Merkmalsvektor wird immer in der gleichen Order gespeichert wie das OFF-File des Modells
