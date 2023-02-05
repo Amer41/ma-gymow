@@ -44,9 +44,9 @@ class FVCalculator():
                 file_path_FV = os.path.join(dirpath, self.fv_file_name)
                 # file_path_X = os.path.join(dirpath, 'X.txt') # die Koordinaten der X-Kurve können auch erstellt werden
                 with open(file_path_FV, 'w') as f:
-                    n = len(obj.fv)
+                    n = len(obj.feature_vector)
                     f.write(str(n) + '\n')
-                    for j in obj.fv:
+                    for j in obj.feature_vector:
                         f.write(str(j) + ' ')
                 # with open(file_path_X, 'w') as f:
                 #     n = len(obj.X)
