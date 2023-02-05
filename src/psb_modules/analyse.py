@@ -1,4 +1,4 @@
-from src.retrieval_moduls.retrieve import ModelInfo
+from src.retrieval_moduls.recall_and_precision import ModelInfo
 from src.psb_modules.psb_set import PSB, PSBFVVariantion
 from src.psb_modules.classification import ModelClass
 

@@ -4,7 +4,7 @@ from src.algorithm_modules.data_structure.vector3 import Vector3
 import ipyvolume as ipv
 import matplotlib.pyplot as plt
 
-from src.retrieval_moduls.retrieve import recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.retrieval_moduls.recall_and_precision import compute_average_recall_precision_curve, retrieve_nearest_k_neigbors, retrieve_models
 from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import FVCalculator
 from src.psb_modules.analyse import PSBAnalyser
@@ -21,7 +21,7 @@ distances = []
 for q in queries:
     dist = retrieve_models(q, models_test)
     distances.append(dist)
-table = recall_precision_retrieved_models(distances, queries, 10)
+table = retrieve_nearest_k_neigbors(distances, queries, 10)
 indices = np.array([1,2,3,4,5,6,7,8,9,10, 'Gesuchte Objekte', 'Gefundene Objekte', 'Trefferquote', 'Genauigkeit'])
 data = pd.DataFrame(table.T[1:], columns=table.T[0], index=indices)
 # print(data)

@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 import pandas as pd
-from src.retrieval_moduls.retrieve import recall_precision_kk, recall_precision_retrieved_models, retrieve_models
+from src.retrieval_moduls.recall_and_precision import compute_average_recall_precision_curve, retrieve_nearest_k_neigbors, retrieve_models
 from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import FVCalculator
 from src.psb_modules.analyse import PSBAnalyser
@@ -34,7 +34,7 @@ models_train = psb_analyse.get_all_models_info(psb_analyse.classifications.base_
 # Genaigkeit-Trefferquote-Werte bei zunehmendes K (in kk)
 # kk = [1,2,3,4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900]
 kk = [i for i in range(1,901)]
-re_pre1 = recall_precision_kk(models_test, kk)
+re_pre1 = compute_average_recall_precision_curve(models_test, kk)
 # re_pre2 = recall_precision_kk(models_train, kk)
 arr = np.array([kk, re_pre1.T[0], re_pre1.T[1]]).T
 data = pd.DataFrame(arr, columns=['K', 'Trefferquote', 'Genauigkeit'])
@@ -62,13 +62,13 @@ plt.show()
 
 # Erstellt die Excel-Tabellen
 psb_analyse = PSBAnalyser(psb_set.set_path, 15000, 200, 64000, 300, 0)
-mmm = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
+models_test = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
 queries = psb_analyse.get_one_model_per_class(psb_analyse.classifications.base_test, 0)
 distances = []
 for q in queries:
     dist = retrieve_models(q, models_test)
     distances.append(dist)
-table = recall_precision_retrieved_models(distances, queries, 10)
+table = retrieve_nearest_k_neigbors(distances, queries, 10)
 indices = np.array([1,2,3,4,5,6,7,8,9,10, 'Gesuchte Objekte', 'Gefundene Objekte', 'Trefferquote', 'Genauigkeit'])
 data = pd.DataFrame(table.T[1:], columns=table.T[0], index=indices)
 print(data)
@@ -77,3 +77,5 @@ data.to_csv('./data/table_1.csv', sep=';') # Pfad des Excel-Dokuments
 
 
 
+
+# %%
