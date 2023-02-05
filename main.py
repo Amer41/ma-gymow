@@ -2,8 +2,8 @@ from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import PSBFVCalculator
 from src.psb_modules.analyse import PSBAnalyser
 
-from src.retrieval_moduls.recall_and_precision import compute_average_recall_precision_curve
-from src.retrieval_moduls.retrieval import plot_recall_precision_curves, write_average_recall_precision_curve_to_csv, create_deatiled_csv_report
+from src.evaluation_modules.recall_and_precision import compute_average_recall_precision_curve
+from src.evaluation_modules.retrieval import plot_recall_precision_curves, write_average_recall_precision_curve_to_csv, create_deatiled_csv_report
 
 psb = PSB('./psb_v1/')
 

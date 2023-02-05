@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 import pandas as pd
-from src.retrieval_moduls.recall_and_precision import compute_average_recall_precision_curve, retrieve_nearest_k_neigbors, calculate_distances
+from src.evaluation_modules.recall_and_precision import compute_average_recall_precision_curve, retrieve_nearest_k_neigbors, calculate_distances
 from src.psb_modules.calc import PSBFVCalculator
 from src.psb_modules.analyse import PSBAnalyser
 from src.algorithm_modules.data_structure.vector3 import Vector3

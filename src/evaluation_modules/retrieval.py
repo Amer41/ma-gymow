@@ -1,6 +1,6 @@
 from src.psb_modules.analyse import PSBAnalyser
 from src.psb_modules.psb_set import PSB
-from src.retrieval_moduls.recall_and_precision import calculate_distances, retrieve_nearest_k_neigbors
+from src.evaluation_modules.recall_and_precision import calculate_distances, retrieve_nearest_k_neigbors
 
 import matplotlib.pyplot as plt
 import pandas as pd
