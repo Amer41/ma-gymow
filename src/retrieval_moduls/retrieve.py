@@ -13,8 +13,8 @@ class ModelInfo:
     parent_class_name: str
     total_number_of_models_in_class: int
 
-def takesecond(elem): # # dient für die Sortierung von Listen (Sortierung nach dem 2. Element ihrer Mitglieder)
-    return elem[1] # 
+def takesecond(elem):
+    return elem[1]
 
 def retrieve_models(query: ModelInfo, models: list[ModelInfo]): # Abtände der Query zu allen Modelle wird berechnet
     distances: list[tuple[ModelInfo, float]] = []

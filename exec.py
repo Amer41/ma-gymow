@@ -2,14 +2,14 @@
 import numpy as np
 import pandas as pd
 from src.retrieval_moduls.retrieve import recall_precision_kk, recall_precision_retrieved_models, retrieve_models
-from src.psb_modules.psb_set import PSBSet
+from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import FVCalculator
 from src.psb_modules.analyse import PSBAnalyser
 from src.algorithm_modules.data_structure.vector3 import Vector3
 import ipyvolume as ipv
 import matplotlib.pyplot as plt
 
-psb_set = PSBSet('./psb_v1/')
+psb_set = PSB('./psb_v1/')
 # %%
 # root_dir_norm = r'C:\Users\AmerM\OneDrive - SBL\2021-22\MA\FT\vsc\objekte\OBJ'
 # o1 = object2.from_obj('Porsche_911_GT2.obj', 15000, 200, 64000, 300)
@@ -22,14 +22,14 @@ psb_set = PSBSet('./psb_v1/')
 
 # %%
 
-psb_calc = FVCalculator(psb_set, 15000, 200, 64000, 300, 0)
+psb_calc = FVCalculator(psb_set.set_path, 15000, 200, 64000, 300, 0)
 # %%
-psb_calc.compute_FV_PSB()
+psb_calc.compute_all_feature_vectors()
 # %%
 
-psb_analyse = PSBAnalyser(psb_set, 15000, 200, 64000, 300, 0)
-models_test = psb_analyse.get_modelsWithClassName(psb_analyse.psb_set.classifications.base_test)
-models_train = psb_analyse.get_modelsWithClassName(psb_analyse.psb_set.classifications.base_train)
+psb_analyse = PSBAnalyser(psb_set.set_path, 15000, 200, 64000, 300, 0)
+models_test = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
+models_train = psb_analyse.get_all_models_info(psb_analyse.classifications.base_train)
 
 # Genaigkeit-Trefferquote-Werte bei zunehmendes K (in kk)
 # kk = [1,2,3,4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900]
@@ -61,9 +61,9 @@ plt.show()
 
 
 # Erstellt die Excel-Tabellen
-psb_analyse = PSBAnalyser(psb_set, 15000, 200, 64000, 300, 0)
-mmm = psb_analyse.get_modelsWithClassName(psb_analyse.psb_set.classifications.base_test)
-queries = psb_analyse.get_onemodelpeerclass(psb_analyse.psb_set.classifications.base_test, 0)
+psb_analyse = PSBAnalyser(psb_set.set_path, 15000, 200, 64000, 300, 0)
+mmm = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
+queries = psb_analyse.get_one_model_per_class(psb_analyse.classifications.base_test, 0)
 distances = []
 for q in queries:
     dist = retrieve_models(q, models_test)

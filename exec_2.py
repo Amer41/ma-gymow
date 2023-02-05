@@ -5,17 +5,18 @@ import ipyvolume as ipv
 import matplotlib.pyplot as plt
 
 from src.retrieval_moduls.retrieve import recall_precision_kk, recall_precision_retrieved_models, retrieve_models
-from src.psb_modules.psb_set import PSBSet
+from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import FVCalculator
 from src.psb_modules.analyse import PSBAnalyser
 
-psb_set = PSBSet('./psb_v1/')
+psb_set = PSB('./psb_v1/')
+
 
 # Erstellt die Excel-Tabellen
-psb_analyse = PSBAnalyser(psb_set, 15000, 200, 64000, 300, 0)
-models_test = psb_analyse.get_modelsWithClassName(psb_analyse.psb_set.classifications.base_test)
-mmm = psb_analyse.get_modelsWithClassName(psb_analyse.psb_set.classifications.base_test)
-queries = psb_analyse.get_onemodelpeerclass(psb_analyse.psb_set.classifications.base_test, 0)
+psb_analyse = PSBAnalyser(psb_set.set_path, 15000, 200, 64000, 300, 0)
+models_test = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
+mmm = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
+queries = psb_analyse.get_one_model_per_class(psb_analyse.classifications.base_test, 0)
 distances = []
 for q in queries:
     dist = retrieve_models(q, models_test)
