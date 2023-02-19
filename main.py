@@ -7,15 +7,20 @@ from src.evaluation_modules.retrieval import plot_recall_precision_curves, write
 
 psb = PSB('./psb_v1/')
 
-psb_calculator = PSBFVCalculator(psb.path, 3000, 50, 64000, 300, 0)
-psb_analyser = PSBAnalyser(psb.path, 15000, 200, 64000, 300, 0)
+psb_calculator_2 = PSBFVCalculator(psb.path, 2400, 70, 64000, 300, 0)
+psb_analyser_2 = PSBAnalyser(psb.path, 2400, 70, 64000, 300, 0)
 
-models_test = psb_analyser.get_all_models_info(psb.classifications.base_test)
-models_train = psb_analyser.get_all_models_info(psb.classifications.base_train)
+# psb_calculator = PSBFVCalculator(psb.path, 3000, 50, 64000, 300, 0)
+# psb_analyser = PSBAnalyser(psb.path, 15000, 200, 64000, 300, 0)
+
+psb_calculator_2.compute_all_feature_vectors()
+
+models_test = psb_analyser_2.get_all_models_info(psb.classifications.base_test)
+models_train = psb_analyser_2.get_all_models_info(psb.classifications.base_train)
 
 recall_precision_curve = compute_average_recall_precision_curve(models_test)
 
 plot_recall_precision_curves([recall_precision_curve])
-write_average_recall_precision_curve_to_csv(recall_precision_curve)
+write_average_recall_precision_curve_to_csv(recall_precision_curve, file_path='./data/test_2.csv')
 
-create_deatiled_csv_report(psb_analyser)
+create_deatiled_csv_report(psb_analyser_2, file_path='./data/table_2.csv')
