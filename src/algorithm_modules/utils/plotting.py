@@ -3,39 +3,42 @@ import ipyvolume as ipv
 import numpy as np
 #  visualisiert Polygonnetz
 # nimmt V (Menge der Eckpunkte) und F (Die Indizes der Eckpunkte, welche die Facetten bilden) als Input
-def plot_mesh_v3(V: list[Vector3], F: list[tuple[int, int, int]], color: str='yellow'):
+
+def plot_mesh(vertices: list[Vector3], faces: list[tuple[int, int, int]], color: str='yellow'):
     x: list[float] = []
     y: list[float] = []
     z: list[float] = []
-    for i in V:
+    for i in vertices:
         x.append(i.x)
         y.append(i.y)
         z.append(i.z)
-    ipv.plot_trisurf(x,y,z, triangles=F, color=color) # type: ignore
-    ipv.xyzlim(-30,30) # type: ignore
+    ipv.plot_trisurf(x,y,z, triangles=faces, color=color)
+    # ipv.xyzlim(-30,30)
 
 # visualisiert 3d-Kurve
-def plot_3d_curve_v3(U: list[Vector3], color:str='red'):
+def plot_3d_curve(curve: list[Vector3], color: str='red'):
     x: list[float] = []
     y: list[float] = []
     z: list[float] = []
-    for i in U:
+    for i in curve:
         x.append(i.x)
         y.append(i.y)
         z.append(i.z)
-    x = np.array(x)    # type: ignore
-    y = np.array(y)# type: ignore
-    z = np.array(z)# type: ignore
-    line = ipv.plot(x, y, z, color=color) # type: ignore
-def scatter_3d_curve_v3(U: list[Vector3], color:str='red'): 
+    x_array = np.array(x)  
+    y_array = np.array(y)  
+    z_array = np.array(z)  
+    line = ipv.plot(x_array, y_array, z_array, color=color)
+
+
+def scatter_3d(point_set: list[Vector3], plot_scale: float = 1, color: str='red'):
     x: list[float] = []
     y: list[float] = []
     z: list[float] = []
-    for i in U:
+    for i in point_set:
         x.append(i.x)
         y.append(i.y)
         z.append(i.z)
-    x = np.array(x)    # type: ignore
-    y = np.array(y)# type: ignore
-    z = np.array(z)# type: ignore
-    line = ipv.scatter(x, y, z, color=color) # type: ignore
+    x_array = np.array(x) * plot_scale
+    y_array = np.array(y) * plot_scale
+    z_array = np.array(z) * plot_scale
+    ipv.scatter(x_array, y_array, z_array, color=color, size=0.5, marker='o')
