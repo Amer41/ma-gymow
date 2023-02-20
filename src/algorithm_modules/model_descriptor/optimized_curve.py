@@ -2,7 +2,7 @@ from math import pi, sqrt, sin, cos
 from src.algorithm_modules.data_structure.vector3 import Vector3
 """
     algorihtm src: https://www.cmu.edu/biolphys/deserno/pdf/sphere_equi.pdf
-    
+
 """
 def create_point_on_sphere(polar_angle_upsilon: float, azimuthal_angle_phi: float) -> Vector3:
     x_coordinate = sin(polar_angle_upsilon) * cos(azimuthal_angle_phi)
@@ -11,7 +11,7 @@ def create_point_on_sphere(polar_angle_upsilon: float, azimuthal_angle_phi: floa
     return Vector3(x_coordinate, y_coordinate, z_coordinate)
 
 
-def generate_sphere_with_equidistibuted_points(number_of_points, radius: float = 1) -> list[Vector3]:
+def generate_sphere_with_equidistibuted_points(number_of_points: int, radius: float = 1) -> list[Vector3]:
     equidistributed_points_on_sphere: list[Vector3] = []
     interval_of_circles_of_latitude_d_upsilon = ...
     interval_of_points_d_phi = ...
@@ -30,7 +30,7 @@ def generate_sphere_with_equidistibuted_points(number_of_points, radius: float =
             azimuthal_angle_phi = (2 * pi * point) / number_of_points_on_circle_M_phi
             equidistributed_points_on_sphere.append(create_point_on_sphere(polar_angle_upsilon, azimuthal_angle_phi))
             N_count += 1
-    print(N_count)
-    print(number_of_circles_of_latitude_M_upsilon)
+    # print(N_count)
+    # print(number_of_circles_of_latitude_M_upsilon)
     return equidistributed_points_on_sphere
 

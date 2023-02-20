@@ -1,4 +1,5 @@
 from src.algorithm_modules.model_descriptor.curve import compute_spherical_helix, compute_3D_curve_X_and_its_distance_from_origin_R
+from src.algorithm_modules.model_descriptor.optimized_curve import generate_sphere_with_equidistibuted_points
 from src.algorithm_modules.model_descriptor.cPCA import center_vertices, sort_vertices_by_triangle_T, compute_covariance_matrix_cI,compute_eigs, align_centered_vertices, compute_all_mesh_info, compute_flipping_vector, compute_scaling_factor, scale_and_flipp_normalized_mesh
 from src.algorithm_modules.model_descriptor.feature_vector import extract_feature_vector
 from src.algorithm_modules.model_descriptor.fourier import compute_fourier_coefficients, invert_FSC
@@ -25,7 +26,8 @@ class FeatureVectorExtractor:
         self.p_min = p_min
         self.c_number = c_number
 
-        self.spherical_helix = compute_spherical_helix(self.number_of_points, self.winding_speed)
+        # self.spherical_helix = compute_spherical_helix(self.number_of_points, self.winding_speed)
+        self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
 
         # --------------- normalisierung -------------------
 
