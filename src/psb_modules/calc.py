@@ -4,12 +4,15 @@ from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtracto
 import math
 
 from dataclasses import dataclass
+from typing import Optional
 import os
+
 
 
 
 @dataclass
 class PSBFVCalculator(PSBFVVariantion):
+    sphere_type: str
 
     def compute_all_feature_vectors(self): # erstellt den Merkmalsvektor für alle Modelle im Benchmark
                                 # Merkmalsvektor wird immer in der gleichen Order gespeichert wie das OFF-File des Modells
@@ -28,7 +31,7 @@ class PSBFVCalculator(PSBFVVariantion):
                 file_path_off = os.path.join(dirpath, i)
                 vertices, faces = read_off_file(file_path_off)
                 print(file_path_off)
-                obj = FeatureVectorExtractor(vertices, faces, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
+                obj = FeatureVectorExtractor(vertices, faces, self.number_of_points, self.winding_speed, self.p_min, self.c_number, self.sphere_type)
                 file_path_FV = os.path.join(dirpath, self.fv_file_name)
                 file_path_X = os.path.join(dirpath, self.x_file_name)
                 with open(file_path_FV, 'w') as f:
@@ -57,15 +60,15 @@ class PSBFVCalculator(PSBFVVariantion):
             os.remove(file_path_FV)
             os.remove(file_path_X)
 
-    def get_3d_model_with_id(self, modelID: int): # holt ein bestimmtes Modell als object2
+    def get_3d_model_with_id(self, modelID: int) -> Optional[FeatureVectorExtractor]: # holt ein bestimmtes Modell als object2
         sub_dir_1 = str(math.floor(modelID / 100))
         sub_dir_2 = 'm' + str(modelID)
         file_path_FV = os.path.join(self.directory, sub_dir_1, sub_dir_2, sub_dir_2 + '.off')
         if os.path.isfile(file_path_FV):
-            obj = FeatureVectorExtractor.from_off(file_path_FV, self.number_of_points, self.winding_speed, self.p_min, self.c_number)
+            obj = FeatureVectorExtractor.from_off(file_path_FV, self.number_of_points, self.winding_speed, self.p_min, self.c_number, self.sphere_type)
             return obj
         else:
             print('file does not exist')
             print(file_path_FV)
-            return False
+            return None
 

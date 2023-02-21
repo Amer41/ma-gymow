@@ -5,10 +5,13 @@ from src.algorithm_modules.model_descriptor.feature_vector import extract_featur
 from src.algorithm_modules.model_descriptor.fourier import compute_fourier_coefficients, invert_FSC
 from src.algorithm_modules.utils.parsing import read_obj_file, read_off_file
 from src.algorithm_modules.data_structure.vector3 import Vector3
+from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 import ipyvolume as ipv
+
+
 
 
 class FeatureVectorExtractor:
@@ -18,7 +21,7 @@ class FeatureVectorExtractor:
     p_min: wird für die bestimmung des Skalierungsfaktors verwendet
     c_number: Bestimmt die Anzahl der Fourier-Koeffizienen im Merkmalsvektor
     '''
-    def __init__(self, V: list[Vector3], F: list[tuple[int, int, int]], number_of_points: int, winding_speed: int, p_min:int, c_number: int):
+    def __init__(self, V: list[Vector3], F: list[tuple[int, int, int]], number_of_points: int, winding_speed: int, p_min:int, c_number: int, sphere_type: str):
         self.V = V
         self.F = F
         self.number_of_points = number_of_points
@@ -26,8 +29,12 @@ class FeatureVectorExtractor:
         self.p_min = p_min
         self.c_number = c_number
 
-        # self.spherical_helix = compute_spherical_helix(self.number_of_points, self.winding_speed)
-        self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
+        if sphere_type == 'sin':
+            self.spherical_helix = compute_spherical_helix(self.number_of_points, self.winding_speed)
+        elif sphere_type == 'equi':
+            self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
+        else:
+            raise ValueError
 
         # --------------- normalisierung -------------------
 
@@ -52,13 +59,13 @@ class FeatureVectorExtractor:
 
 
     @classmethod
-    def from_obj(cls, obj_file: str,  number_of_points: int, winding_speed: int, p_min:int, c_number: int):
+    def from_obj(cls, obj_file: str,  number_of_points: int, winding_speed: int, p_min:int, c_number: int, sphere_type: str):
         V, F = read_obj_file(obj_file)
-        return cls(V, F,  number_of_points, winding_speed, p_min, c_number)
+        return cls(V, F,  number_of_points, winding_speed, p_min, c_number, sphere_type)
     @classmethod
-    def from_off(cls, obj_file: str,  number_of_points: int, winding_speed: int, p_min:int, c_number: int):
+    def from_off(cls, obj_file: str,  number_of_points: int, winding_speed: int, p_min:int, c_number: int, sphere_type: str):
         V, F = read_off_file(obj_file)
-        return cls(V, F,  number_of_points, winding_speed, p_min, c_number)
+        return cls(V, F,  number_of_points, winding_speed, p_min, c_number, sphere_type)
     
 
     def distance(self, other: 'FeatureVectorExtractor'):
@@ -115,3 +122,11 @@ class FeatureVectorExtractor:
         N = len(curve)
         t = [(2*np.pi)*i/N for i in range(N)]
         plt.plot(t,curve) 
+
+
+
+# class SphereType:
+#     def __init__(self, type:str) -> None:
+#         if not (type == 'sin' or type == 'equi' or type == 'equi__eigs'):
+#             raise ValueError('given type is not valid')
+#         self.type = type
