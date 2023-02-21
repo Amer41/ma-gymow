@@ -5,9 +5,9 @@ from src.algorithm_modules.data_structure.vector3 import Vector3
 
 """
 def create_point_on_sphere(polar_angle_upsilon: float, azimuthal_angle_phi: float) -> Vector3:
-    x_coordinate = sin(polar_angle_upsilon) * cos(azimuthal_angle_phi)
+    z_coordinate = sin(polar_angle_upsilon) * cos(azimuthal_angle_phi)
     y_coordinate = sin(polar_angle_upsilon) * sin(azimuthal_angle_phi)
-    z_coordinate = cos(polar_angle_upsilon)
+    x_coordinate = cos(polar_angle_upsilon)
     return Vector3(x_coordinate, y_coordinate, z_coordinate)
 
 
@@ -33,4 +33,26 @@ def generate_sphere_with_equidistibuted_points(number_of_points: int, radius: fl
     # print(N_count)
     # print(number_of_circles_of_latitude_M_upsilon)
     return equidistributed_points_on_sphere
+
+
+def stretch_equi_sphere_using_eigs(eigen_values: Vector3, sphere: list[Vector3]):
+    stretched_sphere: list[Vector3] = []
+    for point in sphere:
+        stretched_sphere.append(eigen_values.multiply_by_vec3(point))
+    return stretched_sphere
+
+
+
+def compute_spherical_helix(number_of_points: int, winding_speed: int) -> list[Vector3]:
+    n = number_of_points 
+    time: list[float] = [pi*i*(1/(n)) for i in range(n)]
+    q = winding_speed
+    denom = n - 1
+    spherical_helix: list[Vector3] = []
+    for t in time:
+        x = cos(t*(n/(denom)))
+        y = sin(q*t*(n/(denom)))*sin(t*(n/(denom)))
+        z = cos(q*t*(n/(denom)))*sin(t*(n/(denom)))
+        spherical_helix.append(Vector3(x,y,z))
+    return spherical_helix
 

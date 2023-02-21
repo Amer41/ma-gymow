@@ -59,6 +59,8 @@ def plot_3d_curve_plt(point_set: list[Vector3], plot_scale: float = 1, color: st
     z_array = np.array(z) * plot_scale
     fig = plt.figure()
     ax = plt.axes(projection='3d')
+    ax.axis('equal')
+    ax.axis([-2, 2, -2, 2])
     ax.plot(x_array,y_array,z_array, color)
 
 def scatter_3d_plt(point_set: list[Vector3], plot_scale: float = 1, color: str='red'):

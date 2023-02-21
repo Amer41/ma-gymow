@@ -1,5 +1,5 @@
 from src.algorithm_modules.model_descriptor.curve import compute_spherical_helix, compute_3D_curve_X_and_its_distance_from_origin_R
-from src.algorithm_modules.model_descriptor.optimized_curve import generate_sphere_with_equidistibuted_points
+from src.algorithm_modules.model_descriptor.optimized_curve import generate_sphere_with_equidistibuted_points, stretch_equi_sphere_using_eigs
 from src.algorithm_modules.model_descriptor.cPCA import center_vertices, sort_vertices_by_triangle_T, compute_covariance_matrix_cI,compute_eigs, align_centered_vertices, compute_all_mesh_info, compute_flipping_vector, compute_scaling_factor, scale_and_flipp_normalized_mesh
 from src.algorithm_modules.model_descriptor.feature_vector import extract_feature_vector
 from src.algorithm_modules.model_descriptor.fourier import compute_fourier_coefficients, invert_FSC
@@ -29,12 +29,7 @@ class FeatureVectorExtractor:
         self.p_min = p_min
         self.c_number = c_number
 
-        if sphere_type == 'sin':
-            self.spherical_helix = compute_spherical_helix(self.number_of_points, self.winding_speed)
-        elif sphere_type == 'equi':
-            self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
-        else:
-            raise ValueError
+
 
         # --------------- normalisierung -------------------
 
@@ -49,6 +44,18 @@ class FeatureVectorExtractor:
         self.flipping_vector_Fl = compute_flipping_vector(self.aligned_centered_vertices_sorted_by_triangle_T2, self.triangles_surfaces_S, self.total_mesh_surface_S)
         self.scaling_factor = compute_scaling_factor(self.aligned_centered_vertices_sorted_by_triangle_T2, self.triangles_surfaces_S, self.total_mesh_surface_S, self.p_min)
         self.normalized_vertices_V3 = scale_and_flipp_normalized_mesh(self.aligned_centered_vertices_V2, self.flipping_vector_Fl, self.scaling_factor)
+
+        # -------------------------------------------------------------------
+
+        if sphere_type == 'sin':
+            self.spherical_helix = compute_spherical_helix(self.number_of_points, self.winding_speed)
+        elif sphere_type == 'equi':
+            self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
+        elif sphere_type == 'equi_eigs':
+            self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
+            self.spherical_helix = stretch_equi_sphere_using_eigs(self.eig_values, self.spherical_helix)
+        else:
+            raise ValueError
 
         # --------------- extrahierung des Merkmalsvektors -------------------
 
