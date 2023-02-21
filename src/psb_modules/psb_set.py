@@ -4,12 +4,14 @@ from typing import ClassVar
 
 from src.psb_modules.classification import PSDClassification
 
-@dataclass
+# @dataclass
 class PSB:
-    path: str 
-
     relative_classification_path: ClassVar[str] = 'benchmark/classification'
     relative_bm_set_path: ClassVar[str] = 'benchmark/db'
+    def __init__(self, path:str) -> None:
+        self.path = os.path.abspath(path)
+
+
 
 
     @property
@@ -29,13 +31,14 @@ class PSB:
 
 
 
-@dataclass
 class PSBFVVariantion(PSB):
-    number_of_points: int
-    winding_speed: int
-    p_min: int
-    c_number: int
-    filename_index: int
+    def __init__(self, path: str, number_of_points:int, winding_speed: int, p_min: int, c_number:int, filename_index:int) -> None:
+        super().__init__(path)
+        self.number_of_points = number_of_points
+        self.winding_speed = winding_speed
+        self.p_min = p_min
+        self.c_number = c_number
+        self.filename_index = filename_index
 
     @property
     def fv_file_name(self) -> str:

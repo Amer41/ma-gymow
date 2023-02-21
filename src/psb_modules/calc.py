@@ -3,16 +3,18 @@ from src.algorithm_modules.utils.parsing import read_off_file
 from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtractor
 import math
 
-from dataclasses import dataclass
+
 from typing import Optional
 import os
 
 
 
 
-@dataclass
+
 class PSBFVCalculator(PSBFVVariantion):
-    sphere_type: str
+    def __init__(self, path: str, number_of_points: int, winding_speed: int, p_min: int, c_number: int, filename_index: int, sphere_type: str) -> None:
+        super().__init__(path, number_of_points, winding_speed, p_min, c_number, filename_index)
+        self.sphere_type = sphere_type
 
     def compute_all_feature_vectors(self): # erstellt den Merkmalsvektor für alle Modelle im Benchmark
                                 # Merkmalsvektor wird immer in der gleichen Order gespeichert wie das OFF-File des Modells
@@ -34,16 +36,18 @@ class PSBFVCalculator(PSBFVVariantion):
                 obj = FeatureVectorExtractor(vertices, faces, self.number_of_points, self.winding_speed, self.p_min, self.c_number, self.sphere_type)
                 file_path_FV = os.path.join(dirpath, self.fv_file_name)
                 file_path_X = os.path.join(dirpath, self.x_file_name)
-                with open(file_path_FV, 'w') as f:
-                    n = len(obj.feature_vector)
-                    f.write(str(n) + '\n')
-                    for j in obj.feature_vector:
-                        f.write(str(j) + ' ')
-                with open(file_path_X, 'w') as f:
-                    n = len(obj._3d_curve_X)
-                    f.write(str(n) + '\n')
-                    for j in obj._3d_curve_X:
-                        f.write(str(j.x) + ' ' + str(j.y) + ' ' + str(j.z) + '\n')
+                if not os.path.isfile(file_path_FV):
+                    with open(file_path_FV, 'w') as f:
+                        n = len(obj.feature_vector)
+                        f.write(str(n) + '\n')
+                        for j in obj.feature_vector:
+                            f.write(str(j) + ' ')
+                if not os.path.isfile(file_path_X):
+                    with open(file_path_X, 'w') as f:
+                        n = len(obj._3d_curve_X)
+                        f.write(str(n) + '\n')
+                        for j in obj._3d_curve_X:
+                            f.write(str(j.x) + ' ' + str(j.y) + ' ' + str(j.z) + '\n')
 
     def delete_all_feature_vectors(self): # macht die obere Funktion rückgängig
         confirm = input('do you want to remove all FVs from ' + str(self.directory) + '? (y/n)')

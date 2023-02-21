@@ -2,12 +2,14 @@ from src.evaluation_modules.recall_and_precision import ModelInfo
 from src.psb_modules.psb_set import PSB, PSBFVVariantion
 from src.psb_modules.classification import ModelClass
 
-from dataclasses import dataclass
+
 import os
 import math
 
-@dataclass
+
 class PSBAnalyser(PSBFVVariantion):
+    def __init__(self, path: str, number_of_points: int, winding_speed: int, p_min: int, c_number: int, filename_index: int) -> None:
+        super().__init__(path, number_of_points, winding_speed, p_min, c_number, filename_index)
 
 
     def get_feature_vector_from_model(self, modelID: int):
