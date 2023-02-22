@@ -1,5 +1,6 @@
 from math import pi, sqrt, sin, cos
 from src.algorithm_modules.data_structure.vector3 import Vector3
+from src.algorithm_modules.model_descriptor.aabb import AABB
 """
     algorihtm src: https://www.cmu.edu/biolphys/deserno/pdf/sphere_equi.pdf
 
@@ -41,7 +42,22 @@ def stretch_equi_sphere_using_eigs(eigen_values: Vector3, sphere: list[Vector3])
         stretched_sphere.append(eigen_values.multiply_by_vec3(point))
     return stretched_sphere
 
+def stretch_equi_sphere_using_aabb(aabb: AABB, sphere: list[Vector3]):
+    for point in sphere:
+        if point.x >= 0:
+            point.scale_x(abs(aabb.x_range.max))
+        else:
+            point.scale_x(abs(aabb.x_range.min))
 
+        if point.y >= 0:
+            point.scale_y(abs(aabb.y_range.max))
+        else:
+            point.scale_y(abs(aabb.y_range.min))
+
+        if point.z >= 0:
+            point.scale_z(abs(aabb.z_range.max))
+        else:
+            point.scale_z(abs(aabb.z_range.min))      
 
 def compute_spherical_helix(number_of_points: int, winding_speed: int) -> list[Vector3]:
     n = number_of_points 

@@ -48,6 +48,15 @@ class Vector3:
                     self.y * scalar,
                     self.z * scalar)
 
+    def scale_x(self, scalar: float):
+        self.x = self.x*scalar
+
+    def scale_y(self, scalar: float):
+        self.y = self.y*scalar
+
+    def scale_z(self, scalar: float):
+        self.z = self.z*scalar
+
     def multiply_by_vec3(self, other: 'Vector3') -> 'Vector3':
         return Vector3(self.x * other.x,
                     self.y * other.y,

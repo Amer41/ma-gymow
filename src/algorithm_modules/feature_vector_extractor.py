@@ -1,11 +1,13 @@
 from src.algorithm_modules.model_descriptor.curve import compute_spherical_helix, compute_3D_curve_X_and_its_distance_from_origin_R
-from src.algorithm_modules.model_descriptor.optimized_curve import generate_sphere_with_equidistibuted_points, stretch_equi_sphere_using_eigs
+from src.algorithm_modules.model_descriptor.optimized_curve import generate_sphere_with_equidistibuted_points, stretch_equi_sphere_using_eigs, stretch_equi_sphere_using_aabb
 from src.algorithm_modules.model_descriptor.cPCA import center_vertices, sort_vertices_by_triangle_T, compute_covariance_matrix_cI,compute_eigs, align_centered_vertices, compute_all_mesh_info, compute_flipping_vector, compute_scaling_factor, scale_and_flipp_normalized_mesh
 from src.algorithm_modules.model_descriptor.feature_vector import extract_feature_vector
 from src.algorithm_modules.model_descriptor.fourier import compute_fourier_coefficients, invert_FSC
 from src.algorithm_modules.utils.parsing import read_obj_file, read_off_file
+from src.algorithm_modules.model_descriptor.aabb import AABB
 from src.algorithm_modules.data_structure.vector3 import Vector3
 from dataclasses import dataclass
+
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -54,6 +56,11 @@ class FeatureVectorExtractor:
         elif sphere_type == 'equi_eigs':
             self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
             self.spherical_helix = stretch_equi_sphere_using_eigs(self.eig_values, self.spherical_helix)
+        elif sphere_type == 'equi_aabb':
+            self.spherical_helix = generate_sphere_with_equidistibuted_points(self.number_of_points)
+            bounding_box = AABB()
+            bounding_box.compute_from_list_of_vector3(self.normalized_vertices_V3)
+            stretch_equi_sphere_using_aabb(bounding_box, self.spherical_helix)
         else:
             raise ValueError
 
@@ -97,7 +104,7 @@ class FeatureVectorExtractor:
         ipv.plot_trisurf(x,y,z, triangles=faces, color=color)
 
     @staticmethod
-    def plot_3d_curve(curve: list[Vector3], color: str='red'):
+    def plot_3d_curve(curve: list[Vector3], plot_scale: float = 1, color: str='red'):
         x: list[float] = []
         y: list[float] = []
         z: list[float] = []
@@ -105,9 +112,9 @@ class FeatureVectorExtractor:
             x.append(i.x)
             y.append(i.y)
             z.append(i.z)
-        x_array = np.array(x)  
-        y_array = np.array(y)  
-        z_array = np.array(z)  
+        x_array = np.array(x) * plot_scale
+        y_array = np.array(y) * plot_scale  
+        z_array = np.array(z) * plot_scale  
         line = ipv.plot(x_array, y_array, z_array, color=color)
 
     @staticmethod
