@@ -17,7 +17,7 @@ def plot_mesh(vertices: list[Vector3], faces: list[tuple[int, int, int]], color:
     # ipv.xyzlim(-30,30)
 
 # visualisiert 3d-Kurve
-def plot_3d_curve(curve: list[Vector3], color: str='red'):
+def plot_3d_curve(curve: list[Vector3], plot_scale: float = 1, color: str='red'):
     x: list[float] = []
     y: list[float] = []
     z: list[float] = []
@@ -25,9 +25,9 @@ def plot_3d_curve(curve: list[Vector3], color: str='red'):
         x.append(i.x)
         y.append(i.y)
         z.append(i.z)
-    x_array = np.array(x)  
-    y_array = np.array(y)  
-    z_array = np.array(z)  
+    x_array = np.array(x) * plot_scale
+    y_array = np.array(y) * plot_scale  
+    z_array = np.array(z) * plot_scale  
     line = ipv.plot(x_array, y_array, z_array, color=color)
 
 
@@ -42,7 +42,7 @@ def scatter_3d(point_set: list[Vector3], plot_scale: float = 1, color: str='red'
     x_array = np.array(x) * plot_scale
     y_array = np.array(y) * plot_scale
     z_array = np.array(z) * plot_scale
-    ipv.scatter(x_array, y_array, z_array, color=color, size=0.5, marker='o')
+    ipv.scatter(x_array, y_array, z_array, color=color, size=5)
 
 
 

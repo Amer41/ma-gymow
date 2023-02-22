@@ -2,6 +2,7 @@ from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import PSBFVCalculator
 from src.psb_modules.analyse import PSBAnalyser
 from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtractor
+from src.algorithm_modules.model_descriptor.aabb import AABB
 from src.algorithm_modules.model_descriptor.optimized_curve import generate_sphere_with_equidistibuted_points, compute_spherical_helix
 from src.algorithm_modules.utils.plotting import *
 from time import time
@@ -20,8 +21,8 @@ psb_analyser_1 = PSBAnalyser(psb.path, 15000, 200, 64000, 300, 0)
 psb_calculator_3 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 1, 'equi')
 psb_analyser_3 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 1)
 
-# psb_calculator_7 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 2, 'equi')
-# psb_analyser_7 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 2)
+psb_calculator_7 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 2, 'equi')
+psb_analyser_7 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 2)
 
 psb_calculator_8 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 3, 'equi_eigs')
 psb_analyser_8 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 3)
@@ -39,8 +40,10 @@ psb_calculator_6 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 3, 'equi_eigs'
 psb_analyser_6 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 3)
 
 
-psb_analysers: list[PSBAnalyser] = [psb_analyser_1, psb_analyser_2, psb_analyser_3, psb_analyser_4, psb_analyser_5]
-psb_analysers: list[PSBAnalyser] = [psb_analyser_4, psb_analyser_5]
+psb_analysers: list[PSBAnalyser] = [
+    psb_analyser_1, psb_analyser_2, psb_analyser_3, psb_analyser_4, psb_analyser_5, psb_analyser_6, psb_analyser_8
+    ]
+# psb_analysers: list[PSBAnalyser] = [psb_analyser_4, psb_analyser_5]
 
 
 
@@ -68,7 +71,7 @@ def calculate_results(psb_analyser: PSBAnalyser, run_index:int):
 
 #  ---------------------------------------------------------------------------------------------
 
-def plot_sets(psb_analysers: list[PSBAnalyser]):
+def plot_rp_curves(psb_analysers: list[PSBAnalyser]):
     recall_precision_curves = []
     labels: list[str] = []
     for psb_analyser in psb_analysers:
@@ -84,26 +87,3 @@ def plot_sets(psb_analysers: list[PSBAnalyser]):
 # -----------------------------------------------------------------------------------------------
 
 
-def show_object():
-    o1 = FeatureVectorExtractor.from_obj('Porsche_911_GT2.obj', 2000, 40, 64000, 300, 'sin')
-    o1.plot_2d_curve_over_time(o1._2d_curve_R)
-    plt.show()
-
-def show_object_from_psd(psb_calculator: PSBFVCalculator, model_id):
-    obj1 = psb_calculator.get_3d_model_with_id(model_id)
-
-    # u = generate_sphere_with_equidistibuted_points()
-    if obj1:
-        # plot_3d_curve_plt(obj1._3d_curve_X)
-        plot_3d_curve_plt(obj1.spherical_helix, 100)
-    plt.show()
-
-
-
-def show_object_ipv():
-    u = generate_sphere_with_equidistibuted_points(2500)
-    # u = compute_spherical_helix(2500, 70)
-    ipv.figure()
-    scatter_3d(u)
-    plot_3d_curve(u)
-    ipv.show()

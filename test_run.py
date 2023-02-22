@@ -1,10 +1,10 @@
 from utils import *
 
 
-test_run(psb_calculator_8)
-calculate_results(psb_analyser_8, 8)
+test_run(psb_calculator_7)
+calculate_results(psb_analyser_7, 7)
 
-
+# print(1000)
 
 
 
