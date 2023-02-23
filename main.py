@@ -7,7 +7,7 @@ from utils import *
 # plot_rp_curves(psb_analysers)
 
 
-# test_run(psb_calculator_6)
-# calculate_results(psb_analyser_6, 6)
+test_run(psb_calculator_10)
+calculate_results(psb_analyser_10, 10)
 
 
