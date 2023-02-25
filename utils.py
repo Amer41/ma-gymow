@@ -5,6 +5,7 @@ from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtracto
 from src.algorithm_modules.model_descriptor.aabb import AABB
 from src.algorithm_modules.model_descriptor.optimized_curve import generate_sphere_with_equidistibuted_points, compute_spherical_helix
 from src.algorithm_modules.utils.plotting import *
+from typing import Optional
 from time import time
 
 from src.evaluation_modules.recall_and_precision import compute_average_recall_precision_curve
@@ -21,11 +22,11 @@ psb_analyser_1 = PSBAnalyser(psb.path, 15000, 200, 64000, 300, 0)
 psb_calculator_3 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 1, 'equi')
 psb_analyser_3 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 1)
 
-psb_calculator_7 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 2, 'equi')
-psb_analyser_7 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 2)
+psb_calculator_5 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 2, 'equi')
+psb_analyser_5 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 2)
 
-psb_calculator_8 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 3, 'equi_eigs')
-psb_analyser_8 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 3)
+psb_calculator_7 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 3, 'equi_eigs')
+psb_analyser_7 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 3)
 
 psb_calculator_9 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 4, 'equi_aabb')
 psb_analyser_9 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 4)
@@ -36,11 +37,11 @@ psb_analyser_2 = PSBAnalyser(psb.path, 2400, 70, 64000, 300, 0)
 psb_calculator_4 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 1, 'equi')
 psb_analyser_4 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 1)
 
-psb_calculator_5 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 2, 'equi')
-psb_analyser_5 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 2)
+psb_calculator_6 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 2, 'equi')
+psb_analyser_6 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 2)
 
-psb_calculator_6 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 3, 'equi_eigs')
-psb_analyser_6 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 3)
+psb_calculator_8 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 3, 'equi_eigs')
+psb_analyser_8 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 3)
 
 psb_calculator_10 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 4, 'equi_aabb')
 psb_analyser_10 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 4)
@@ -51,8 +52,9 @@ psb_analysers: list[PSBAnalyser] = [
     psb_analyser_6, psb_analyser_7, psb_analyser_8, psb_analyser_9, psb_analyser_10,
 
     ]
-# psb_analysers: list[PSBAnalyser] = [psb_analyser_4, psb_analyser_5]
+psb_analysers: list[PSBAnalyser] = [psb_analyser_4, psb_analyser_5]
 
+psb_analysers: list[PSBAnalyser] = [psb_analyser_2, psb_analyser_6, psb_analyser_8, psb_analyser_10]
 
 
 
@@ -79,7 +81,7 @@ def calculate_results(psb_analyser: PSBAnalyser, run_index:int):
 
 #  ---------------------------------------------------------------------------------------------
 
-def plot_rp_curves(psb_analysers: list[PSBAnalyser]):
+def plot_rp_curves(psb_analysers: list[PSBAnalyser], curves_labels: Optional[list[str]] = None):
     recall_precision_curves = []
     labels: list[str] = []
     for psb_analyser in psb_analysers:
@@ -88,7 +90,10 @@ def plot_rp_curves(psb_analysers: list[PSBAnalyser]):
 
         recall_precision_curve = compute_average_recall_precision_curve(models_test)
         recall_precision_curves.append(recall_precision_curve)
-        labels.append(psb_analyser.fv_file_name)
+        if curves_labels is None:
+            labels.append(psb_analyser.fv_file_name)
+    if curves_labels is not None:
+        labels = curves_labels
     plot_recall_precision_curves(recall_precision_curves, labels)
 
 

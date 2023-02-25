@@ -17,10 +17,10 @@ def write_average_recall_precision_curve_to_csv(recall_precision_curve, neignors
     data.to_csv(file_path, sep=';')
 
 
-def plot_recall_precision_curves(rec_pre_curves, labels: list[str] = ['Genauigkeit-Trefferquote-Kurve'], legend_location:str = 'upper right'):
+def plot_recall_precision_curves(rec_pre_curves, labels: list[str] = ['Genauigkeit-Trefferquote-Kurve'], font_size:float = 40 , legend_size:float = 40 , legend_location:str = 'upper right'):
     # labels = ['Genauigkeit-Trefferquote-Kurve', 'Label_2']
     plt.rcParams['figure.figsize'] = [16, 10]
-    plt.rcParams.update({'font.size': 40})
+    plt.rcParams.update({'font.size': font_size})
     plt.xlim(0,100)
     plt.ylim(0,100)
     plt.xlabel('Trefferquote (%)')
@@ -29,7 +29,7 @@ def plot_recall_precision_curves(rec_pre_curves, labels: list[str] = ['Genauigke
     for i in range(len(rec_pre_curves)):
         curve_test = rec_pre_curves[i] * 100
         plt.plot(curve_test.T[0], curve_test.T[1], label=labels[i], marker='o', linewidth='3')
-    plt.legend(loc=legend_location, prop={'size':40})
+    plt.legend(loc=legend_location, prop={'size':legend_size})
     plt.show()
 
 
