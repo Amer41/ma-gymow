@@ -31,6 +31,7 @@ psb_analyser_7 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 3)
 psb_calculator_9 = PSBFVCalculator(psb.path, 15000, 0, 64000, 300, 4, 'equi_aabb')
 psb_analyser_9 = PSBAnalyser(psb.path, 15000, 0, 64000, 300, 4)
 
+
 psb_calculator_2 = PSBFVCalculator(psb.path, 2400, 70, 64000, 300, 0, 'sin')
 psb_analyser_2 = PSBAnalyser(psb.path, 2400, 70, 64000, 300, 0)
 
@@ -46,6 +47,18 @@ psb_analyser_8 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 3)
 psb_calculator_10 = PSBFVCalculator(psb.path, 2400, 0, 64000, 300, 4, 'equi_aabb')
 psb_analyser_10 = PSBAnalyser(psb.path, 2400, 0, 64000, 300, 4)
 
+psb_calculator_11 = PSBFVCalculator(psb.path, 400, 50, 64000, 150, 11, 'sin')
+psb_analyser_11 = PSBAnalyser(psb.path, 400, 50, 64000, 150, 11)
+
+psb_calculator_12 = PSBFVCalculator(psb.path, 400, 0, 64000, 150, 12, 'equi_aabb')
+psb_analyser_12 = PSBAnalyser(psb.path, 400, 0, 64000, 150, 12)
+
+psb_calculator_13 = PSBFVCalculator(psb.path, 400, 50, 64000, 300, 13, 'sin')
+psb_analyser_13 = PSBAnalyser(psb.path, 400, 50, 64000, 300, 13)
+
+psb_calculator_14 = PSBFVCalculator(psb.path, 400, 0, 64000, 300, 14, 'equi_aabb')
+psb_analyser_14 = PSBAnalyser(psb.path, 400, 0, 64000, 300, 14)
+
 
 psb_analysers: list[PSBAnalyser] = [
     psb_analyser_1, psb_analyser_2, psb_analyser_3, psb_analyser_4, psb_analyser_5,
@@ -54,7 +67,7 @@ psb_analysers: list[PSBAnalyser] = [
     ]
 psb_analysers: list[PSBAnalyser] = [psb_analyser_4, psb_analyser_5]
 
-psb_analysers: list[PSBAnalyser] = [psb_analyser_2, psb_analyser_6, psb_analyser_8, psb_analyser_10]
+psb_analysers: list[PSBAnalyser] = [psb_analyser_11, psb_analyser_12]#, psb_analyser_13, psb_analyser_14]
 
 
 
