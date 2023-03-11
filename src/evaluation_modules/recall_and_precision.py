@@ -3,12 +3,13 @@ import pandas as pd
 from src.algorithm_modules.model_descriptor.feature_vector import compute_distance
 import numpy as np
 from dataclasses import dataclass
+from typing import Union
 
 
 
 @dataclass
 class ModelInfo:
-    id: int
+    id: Union[int, str]
     fv: list[float]
     class_name: str
     parent_class_name: str
