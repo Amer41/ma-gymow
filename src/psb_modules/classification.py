@@ -19,7 +19,7 @@ class PSDClassification:
 
     @staticmethod
     def read_cla(in_file: str): # Liest CLA-Files
-        classification: list[ModelClass] = []
+        classification: list[PSBModelClass] = []
         with open(in_file, 'r') as f:
             benchmark_name, version_num = f.readline().split(' ')
             num_classes, num_models = f.readline().split(' ')
@@ -30,29 +30,29 @@ class PSDClassification:
                 if len(line.strip().split(' ')) == 3:
                     class_name, parentClass_name, num_modelsInClass = line.strip().split(' ')
                     num_modelsInClass = int(num_modelsInClass)
-                    model_class = ModelClass(class_name, num_modelsInClass, parentClass_name)
+                    model_class = PSBModelClass(class_name, num_modelsInClass, parentClass_name)
                     classification.append(model_class)
                 else:
-                    model_node = ModelNode(int(line))
+                    model_node = PSBModelNode(int(line))
                     classification[len(classification) - 1].models_in_class.append(model_node)
         return classification  
 
 @dataclass
-class ModelNode:
+class PSBModelNode:
     model_id: int
-    model_class: Optional['ModelClass'] = None
+    model_class: Optional['PSBModelClass'] = None
 
     def __str__(self):
         return str(self.model_id)
 
 
 @dataclass
-class ModelClass:
+class PSBModelClass:
     name: str
     number_of_models: int
     parent_class_name: str
-    models_in_class: list[ModelNode] = field(default_factory=list)
-    child_classes: list['ModelClass'] = field(default_factory=list) # unused
+    models_in_class: list[PSBModelNode] = field(default_factory=list)
+    child_classes: list['PSBModelClass'] = field(default_factory=list) # unused
 
 
 

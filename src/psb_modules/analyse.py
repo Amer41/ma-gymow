@@ -1,6 +1,6 @@
 from src.evaluation_modules.recall_and_precision import ModelInfo
 from src.psb_modules.psb_set import PSB, PSBFVVariantion
-from src.psb_modules.classification import ModelClass
+from src.psb_modules.classification import PSBModelClass
 
 
 import os
@@ -37,7 +37,7 @@ class PSBAnalyser(PSBFVVariantion):
 
 
 
-    def get_all_models_info(self, model_classes: list[ModelClass]): # holt die FVs aller Modelle mit der dazu gehörigen Informationen wie Klassename
+    def get_all_models_info(self, model_classes: list[PSBModelClass]): # holt die FVs aller Modelle mit der dazu gehörigen Informationen wie Klassename
         models_info: list[ModelInfo] = []
         for model_class in model_classes:
             for model_node in model_class.models_in_class:
@@ -46,7 +46,7 @@ class PSBAnalyser(PSBFVVariantion):
                     models_info.append(ModelInfo(model_node.model_id, fv, model_class.name, model_class.parent_class_name, model_class.number_of_models))
         return models_info
 
-    def get_one_model_per_class(self, model_classes: list[ModelClass], model_index: int) -> list['ModelInfo']: # die Modelle im Output wurden als Queries verwerdet, um die Excel-Tabelle zu erstellen
+    def get_one_model_per_class(self, model_classes: list[PSBModelClass], model_index: int) -> list['ModelInfo']: # die Modelle im Output wurden als Queries verwerdet, um die Excel-Tabelle zu erstellen
         models_info: list[ModelInfo] = []
         for model_class in model_classes:
             if model_class.number_of_models == 0:
