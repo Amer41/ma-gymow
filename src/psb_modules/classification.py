@@ -54,5 +54,33 @@ class PSBModelClass:
     models_in_class: list[PSBModelNode] = field(default_factory=list)
     child_classes: list['PSBModelClass'] = field(default_factory=list) # unused
 
+    @staticmethod
+    def combine(classification_1 : list['PSBModelClass'], classification_2: list['PSBModelClass']):
+        class_names : set[str] = set()
+        combined_classes : list[PSBModelClass] = []
+        classifications = [classification_1, classification_2]
+        for classification in classifications:
+            for model_class in classification:
+                class_names.add(model_class.name)
+        for class_name in class_names:
+            new_model_class = PSBModelClass(class_name, 0, '0')
+            for classification in classifications:
+                for model_class in classification:
+                    if model_class.name != class_name:
+                        continue
+                    new_model_class.number_of_models += model_class.number_of_models
+                    new_model_class.parent_class_name = model_class.parent_class_name
+                    for model_node in model_class.models_in_class:
+                        new_model_class.models_in_class.append(model_node)
+            for model_node in new_model_class.models_in_class:
+                model_node.model_class = new_model_class
+            combined_classes.append(new_model_class)
+        return combined_classes
+
+
+
+
+
+
 
 

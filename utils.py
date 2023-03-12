@@ -1,5 +1,6 @@
 from src.psb_modules.psb_set import PSB
 from src.psb_modules.calc import PSBFVCalculator
+from src.psb_modules.classification import PSBModelClass
 from src.psb_modules.analyse import PSBAnalyser
 from src.algorithm_modules.feature_vector_extractor import FeatureVectorExtractor
 from src.algorithm_modules.model_descriptor.aabb import AABB
@@ -81,10 +82,10 @@ def test_run(psb_calculator: PSBFVCalculator):
     print(f'Execution time: {end_time - start_time} seconds')
 
 def calculate_results(psb_analyser: PSBAnalyser, run_index:int):
-    models_test = psb_analyser.get_all_models_info(psb.classifications.base_test)
-    models_train = psb_analyser.get_all_models_info(psb.classifications.base_train)
-
-    recall_precision_curve = compute_average_recall_precision_curve(models_test)
+    classes = PSBModelClass.combine(psb.classifications.base_test, psb.classifications.base_train)
+    models = psb_analyser.get_all_models_info(classes)
+    
+    recall_precision_curve = compute_average_recall_precision_curve(models)
 
     plot_recall_precision_curves([recall_precision_curve])
     write_average_recall_precision_curve_to_csv(recall_precision_curve, file_path=f'./data/test_{run_index}.csv')
@@ -98,10 +99,10 @@ def plot_rp_curves(psb_analysers: list[PSBAnalyser], curves_labels: Optional[lis
     recall_precision_curves = []
     labels: list[str] = []
     for psb_analyser in psb_analysers:
-        models_test = psb_analyser.get_all_models_info(psb.classifications.base_test)
-        models_train = psb_analyser.get_all_models_info(psb.classifications.base_train)
+        classes = PSBModelClass.combine(psb.classifications.base_test, psb.classifications.base_train)
+        models = psb_analyser.get_all_models_info(classes)
 
-        recall_precision_curve = compute_average_recall_precision_curve(models_test)
+        recall_precision_curve = compute_average_recall_precision_curve(models)
         recall_precision_curves.append(recall_precision_curve)
         if curves_labels is None:
             labels.append(psb_analyser.fv_file_name)

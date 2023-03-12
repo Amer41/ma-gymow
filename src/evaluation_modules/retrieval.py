@@ -1,5 +1,6 @@
 from src.psb_modules.analyse import PSBAnalyser
 from src.psb_modules.psb_set import PSB
+from src.psb_modules.classification import PSBModelClass
 from src.evaluation_modules.recall_and_precision import calculate_distances, retrieve_nearest_k_neigbors
 
 import matplotlib.pyplot as plt
@@ -35,11 +36,12 @@ def plot_recall_precision_curves(rec_pre_curves, labels: list[str] = ['Genauigke
 
 
 def create_deatiled_csv_report( psb_analyse: PSBAnalyser, index_query: int = 0, nearest_k_neigbors: int = 10, file_path: str= './data/table_1.csv'):
-    models_test = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
-    queries = psb_analyse.get_one_model_per_class(psb_analyse.classifications.base_test, index_query)
+    classes = PSBModelClass.combine(psb_analyse.classifications.base_test, psb_analyse.classifications.base_train)
+    models = psb_analyse.get_all_models_info(classes)
+    queries = psb_analyse.get_one_model_per_class(classes, index_query)
     distances = []
     for q in queries:
-        dist = calculate_distances(q, models_test)
+        dist = calculate_distances(q, models)
         distances.append(dist)
     table = retrieve_nearest_k_neigbors(distances, queries, nearest_k_neigbors)
     indices = np.array([1,2,3,4,5,6,7,8,9,10, 'Gesuchte Objekte', 'Gefundene Objekte', 'Trefferquote', 'Genauigkeit'])
