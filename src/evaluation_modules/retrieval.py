@@ -17,11 +17,11 @@ def write_average_recall_precision_curve_to_csv(recall_precision_curve, neignors
     # print(data)
     data.to_csv(file_path, sep=';')
 
-def read_and_plot_recall_precision_curve_to_csv(file_path: str ='./data/test_1.csv'):
+def read_recall_precision_curve_to_csv(file_path: str ='./data/test_1.csv'):
     data = pd.read_csv(file_path, sep=(';'))
-    recall_curve = np.array(data['Trefferquote']).T
-    precision_curve = np.array(data['Genauigkeit']).T
-    recall_precision_curve = np.array([recall_curve, precision_curve])
+    recall_curve = np.array(data['Trefferquote'])
+    precision_curve = np.array(data['Genauigkeit'])
+    recall_precision_curve = np.array([recall_curve, precision_curve]).T
     return recall_precision_curve
 
 
@@ -43,9 +43,9 @@ def plot_recall_precision_curves(rec_pre_curves, labels: list[str] = ['Genauigke
 
 
 def create_deatiled_csv_report( psb_analyse: PSBAnalyser, index_query: int = 0, nearest_k_neigbors: int = 10, file_path: str= './data/table_1.csv'):
-    classes = PSBModelClass.combine(psb_analyse.classifications.base_test, psb_analyse.classifications.base_train)
-    models = psb_analyse.get_all_models_info(classes)
-    queries = psb_analyse.get_one_model_per_class(classes, index_query)
+    # classes = PSBModelClass.combine(psb_analyse.classifications.base_test, psb_analyse.classifications.base_train)
+    models = psb_analyse.get_all_models_info(psb_analyse.classifications.base_test)
+    queries = psb_analyse.get_one_model_per_class(psb_analyse.classifications.base_test, index_query)
     distances = []
     for q in queries:
         dist = calculate_distances(q, models)
