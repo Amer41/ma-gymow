@@ -53,12 +53,12 @@ def retrieve_nearest_k_neigbors(distances_list: list[list[tuple[ModelInfo, float
 
 
 
-def compute_average_recall_precision_curve(models: list[ModelInfo], neignors_number_list: list[int] = [k for k in range(1,901)]): # berechnet Mittelwerte der Trefferquoten und Genauigkeitswerte für alle K in kk
+def compute_average_recall_precision_curve(models: list[ModelInfo], neigbors_number_list: list[int] = [k for k in range(1,901)]): # berechnet Mittelwerte der Trefferquoten und Genauigkeitswerte für alle K in kk
                                      # damit lässt sich das Genauigkeit-Trefferquote-Digramm erstellt. 
     
     recall_curves = []
     precision_curves = []
-    for _ in range(len(neignors_number_list)):
+    for _ in range(len(neigbors_number_list)):
         recall_curves.append([])
         precision_curves.append([])
 
@@ -77,8 +77,8 @@ def compute_average_recall_precision_curve(models: list[ModelInfo], neignors_num
                 distances.append((model_index, d2))
         distances.sort(key=takesecond)
         # Genaigkeit-Trefferquote-Werte bei zunehmendes k
-        for nighbors_number_index in range(len(neignors_number_list)):
-            nighbors_number = neignors_number_list[nighbors_number_index]
+        for nighbors_number_index in range(len(neigbors_number_list)):
+            nighbors_number = neigbors_number_list[nighbors_number_index]
             rk = 0
             k_ = 0
             for dd in range(nighbors_number):
