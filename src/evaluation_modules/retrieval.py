@@ -17,6 +17,13 @@ def write_average_recall_precision_curve_to_csv(recall_precision_curve, neignors
     # print(data)
     data.to_csv(file_path, sep=';')
 
+def read_and_plot_recall_precision_curve_to_csv(file_path: str ='./data/test_1.csv'):
+    data = pd.read_csv(file_path, sep=(';'))
+    recall_curve = np.array(data['Trefferquote']).T
+    precision_curve = np.array(data['Genauigkeit']).T
+    recall_precision_curve = np.array([recall_curve, precision_curve])
+    return recall_precision_curve
+
 
 def plot_recall_precision_curves(rec_pre_curves, labels: list[str] = ['Genauigkeit-Trefferquote-Kurve'], font_size:float = 40 , legend_size:float = 40 , legend_location:str = 'upper right'):
     # labels = ['Genauigkeit-Trefferquote-Kurve', 'Label_2']

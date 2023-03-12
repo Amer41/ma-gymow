@@ -10,7 +10,7 @@ from typing import Optional
 from time import time
 
 from src.evaluation_modules.recall_and_precision import compute_average_recall_precision_curve
-from src.evaluation_modules.retrieval import plot_recall_precision_curves, write_average_recall_precision_curve_to_csv, create_deatiled_csv_report
+from src.evaluation_modules.retrieval import plot_recall_precision_curves, write_average_recall_precision_curve_to_csv, create_deatiled_csv_report, read_and_plot_recall_precision_curve_to_csv
 
 
 psb = PSB('../psb-testing/psb_v1/')
@@ -70,6 +70,7 @@ psb_analysers: list[PSBAnalyser] = [psb_analyser_4, psb_analyser_5]
 
 psb_analysers: list[PSBAnalyser] = [psb_analyser_11, psb_analyser_12]#, psb_analyser_13, psb_analyser_14]
 
+psb_analysers: list[PSBAnalyser] = [psb_analyser_2, psb_analyser_6, psb_analyser_8, psb_analyser_10]
 
 
 
@@ -87,25 +88,30 @@ def calculate_results(psb_analyser: PSBAnalyser, run_index:int):
     
     recall_precision_curve = compute_average_recall_precision_curve(models)
 
-    plot_recall_precision_curves([recall_precision_curve])
-    write_average_recall_precision_curve_to_csv(recall_precision_curve, file_path=f'./data/test_{run_index}.csv')
+    plot_recall_precision_curves([recall_precision_curve], [psb_analyser.fv_file_name.split(".")[0]])
+    write_average_recall_precision_curve_to_csv(recall_precision_curve, file_path=f'./data/curve_{psb_analyser.fv_file_name.split(".")[0]}_c.csv')
 
-    create_deatiled_csv_report(psb_analyser, file_path=f'./data/table_{run_index}.csv')
+    create_deatiled_csv_report(psb_analyser, file_path=f'./data/table_{psb_analyser.fv_file_name.split(".")[0]}_c.csv')
 
 
 #  ---------------------------------------------------------------------------------------------
 
-def plot_rp_curves(psb_analysers: list[PSBAnalyser], curves_labels: Optional[list[str]] = None):
+def plot_rp_curves(psb_analysers: list[PSBAnalyser], curves_labels: Optional[list[str]] = None, file_paths: Optional[list[str]] = None):
     recall_precision_curves = []
     labels: list[str] = []
-    for psb_analyser in psb_analysers:
-        classes = PSBModelClass.combine(psb.classifications.base_test, psb.classifications.base_train)
-        models = psb_analyser.get_all_models_info(classes)
+    for i in range(len(psb_analysers)):
+        if file_paths == None:
+            psb_analyser = psb_analysers[i]
+            classes = PSBModelClass.combine(psb.classifications.base_test, psb.classifications.base_train)
+            models = psb_analyser.get_all_models_info(classes)
 
-        recall_precision_curve = compute_average_recall_precision_curve(models)
+            recall_precision_curve = compute_average_recall_precision_curve(models)
+            if curves_labels is None:
+                labels.append(psb_analyser.fv_file_name)
+        else:
+            file_path = file_paths[i]
+            recall_precision_curve = read_and_plot_recall_precision_curve_to_csv(file_path)
         recall_precision_curves.append(recall_precision_curve)
-        if curves_labels is None:
-            labels.append(psb_analyser.fv_file_name)
     if curves_labels is not None:
         labels = curves_labels
     plot_recall_precision_curves(recall_precision_curves, labels)
